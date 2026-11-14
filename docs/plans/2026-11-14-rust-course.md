@@ -47,6 +47,16 @@
 **Build:** a binary crate whose `main` checks each function against known values with
 `assert_eq!` and prints a line per check.
 
+**Set up (done 2026-11-14):** the `m1-units` crate exists and prints `Hello, world!`;
+Rustlings 6.5.0 is in `rustlings/` (run `rustlings` from inside it). Replace the
+`Hello, world!` in `m1-units/src/main.rs` with the functions below. Run from the repo
+root with `cargo run -p m1-units`. For the Book's ch. 2 guessing game, `cargo new
+guessing_game` at the repo root adds it to the workspace.
+
+**Already answered while setting up:** `cargo new` adds the crate to the workspace's
+`members` itself; `cargo run` compiles to `target/debug/m1-units` and then runs it, and
+`target/` is gitignored; `println!` ends the line, `print!` does not.
+
 Functions to create (bodies are yours):
 
     fn celsius_to_fahrenheit(c: f64) -> f64        // battery temperature in °F
@@ -71,3 +81,4 @@ previous module is reviewed, so the plan follows what you actually learned.
 
 | # | Module | Reviewed | Notes |
 |---|---|---|---|
+| 1 | m1-units | ⏳ current | set up 2026-11-14; reading Book ch. 1–3 |
