@@ -16,3 +16,10 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 
 - `let number = 3;` again makes a new variable that reuses the name, so its type can differ.
 - `mut` overwrites the same variable, whose type was fixed at the first `let`.
+
+## Return value: the last expression
+
+- A block's value is its last expression, written WITHOUT a trailing `;`.
+- A `;` discards the value, so the block gives `()` instead.
+- `fn f() -> i32 { n * n; }` fails: expected `i32`, found `()`.
+- No `-> T` in the signature means the function returns `()`.
