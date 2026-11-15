@@ -13,8 +13,9 @@ module before the next starts. **Never write an exercise body unless the learner
   crate under about 500 lines.
 - **Explain with a concrete example first**, and when explaining code, run it and paste
   the real output.
-- **Environment:** the repo lives in WSL (`~/dev/learning/rust-edge-lab`). Run `cargo` and
-  `rustlings` there, never from Windows PowerShell. Rust 1.100.0, edition 2024. The
+- **Environment:** the repo lives in WSL on Windows (`~/dev/learning/rust-edge-lab`) and
+  natively on the Mac (`~/development/personal/rust-edge-lab`). Run `cargo` and `rustlings`
+  there, never from Windows PowerShell. Rust 1.100.0, edition 2024. The
   Rust Book online (doc.rust-lang.org/book) targets 1.98+ with edition 2024, so it matches.
 - **Rustlings** lives in `rustlings/`, excluded from the Cargo workspace and committed so
   progress syncs across devices. Run `rustlings` from inside that folder. Its
