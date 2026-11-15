@@ -5,7 +5,8 @@
 - **Goal:** by **2027-03-31**, write a Rust program that reads a solar charge controller
   over Modbus and reports what it sees, then move on to embedded Rust on an ESP32.
 - **Pace:** about 5–7 hours a week from 2026-11-17; the holiday weeks are buffer.
-- **Toolchain:** Rust 1.100.0 (rustup) in WSL and on Windows; Zed in WSL mode.
+- **Toolchain:** Rust 1.100.0 (rustup, with the `rust-analyzer` component) in WSL and on
+  Windows, and on the Mac in Ghostty; Zed in WSL mode on Windows, native on the Mac.
 - **Hardware:** none needed before Module 9 (Jan–Feb purchase).
 
 ## How this course works
