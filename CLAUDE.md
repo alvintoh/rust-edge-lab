@@ -20,5 +20,12 @@ module before the next starts. **Never write an exercise body unless the learner
 - **Rustlings** lives in `rustlings/`, excluded from the Cargo workspace and committed so
   progress syncs across devices. Run `rustlings` from inside that folder. Its
   `solutions/` folder is for after an exercise passes.
+- **Zed:** the `test mod` button runs ONE exercise because `.zed/tasks.json` tags a task
+  `rust-mod-test` (`cargo test --manifest-path rustlings/Cargo.toml --bin $ZED_STEM`).
+  Zed's built-in button runs `cargo test -p exercises -- <fragment>` with no `--bin`, which
+  compiles all 94 exercises, and the unsolved ones fail on purpose. Restart Zed after editing
+  `tasks.json`. A bare `cargo build`/`clippy` in `rustlings/` fails the same way, so use
+  `rustlings run <name>` or the button. Edit in `exercises/`; `solutions/` is filled by
+  rustlings after a pass.
 - **This repo is public.** Nothing private goes in it: no salaries, employers or personal
   career plans.

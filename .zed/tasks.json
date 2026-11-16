@@ -1,0 +1,11 @@
+[
+  {
+    "label": "rustlings: test this exercise",
+    "command": "cargo",
+    "args": ["test", "--manifest-path", "rustlings/Cargo.toml", "--bin", "$ZED_STEM"],
+    "tags": ["rust-mod-test"],
+    "reveal": "always",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  }
+]
