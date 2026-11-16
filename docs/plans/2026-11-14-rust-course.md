@@ -41,9 +41,11 @@
 
 ### Module 1 — `m1-units`
 
-**Read:** Book ch. 1 (install, hello world, Cargo), ch. 2 (guessing game), ch. 3
-(variables, types, functions, control flow). **Drill:** Rustlings `intro`, `variables`,
-`functions`, `if`, `primitive_types`.
+**Drill:** Rustlings `intro`, `variables`, `functions`, `if`, `quiz1`, `primitive_types`.
+The tutor names the matching Book section as each group starts, and you read it then:
+`variables` → 3.1, `functions` → 3.3, `if` → 3.5, `primitive_types` → 3.2. There is no
+separate reading step. Book ch. 1 and ch. 2 stay optional, and `cargo new guessing_game`
+is still there if you want it.
 
 **Build:** a binary crate whose `main` checks each function against known values with
 `assert_eq!` and prints a line per check.
@@ -82,4 +84,4 @@ previous module is reviewed, so the plan follows what you actually learned.
 
 | # | Module | Reviewed | Notes |
 |---|---|---|---|
-| 1 | m1-units | ⏳ current | set up 2026-11-14; reading Book ch. 1–3 |
+| 1 | m1-units | ⏳ current | set up 2026-11-14; Rustlings through `if` done; Book read alongside |
