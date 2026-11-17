@@ -20,6 +20,10 @@
    proves it is memory-safe, not that it is right.
 4. **Small on purpose:** each crate stays under about 500 lines.
 5. **One module is reviewed before the next starts**, and each ends in a commit.
+   **Build before drilling ahead:** a module's build (the crate and its oracle) comes before
+   the next module's Rustlings group, and a group finished early waits for its module's turn.
+   *(Owner's instruction 2026-11-17: drilling ran ahead of building, so the build is the
+   checkpoint that sets the pace.)*
 
 ## General
 
@@ -80,8 +84,17 @@ why `f64` equality is risky.
 Each module's functions, decisions and done-when check are written here when the
 previous module is reviewed, so the plan follows what you actually learned.
 
+### Order from here (2026-11-17)
+
+1. Build `m1-units` from a blank file with `assert_eq!` oracles, then review it.
+2. Write Module 2's blueprint into this plan, build `m2-registers`, review it.
+3. Resume Rustlings at `enums1` (Module 3), then `modules`, `strings`, `hashmaps`, and build
+   `m3-signals`.
+
 ## Record
 
 | # | Module | Reviewed | Notes |
 |---|---|---|---|
-| 1 | m1-units | ⏳ current | set up 2026-11-14; Rustlings through `if` done; Book read alongside |
+| 1 | m1-units | ⏳ current | Rustlings for Module 1 done; next: build the crate from a blank file |
+| 2 | m2-registers | ⏳ next | `move_semantics` and `structs` done early; build waits for Module 1's review |
+| 3 | m3-signals | pending | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
