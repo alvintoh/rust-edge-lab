@@ -13,8 +13,9 @@
 
 1. **You write every line.** The tutor gives the shape (signatures, a flow diagram,
    leading questions) and reviews what you wrote; the bodies are yours.
-2. **Read, drill, build.** Each module pairs Book chapters with the matching Rustlings
-   exercises, then one exercise crate in this workspace.
+2. **Each module runs one loop:** learn (the Book section is named when its Rustlings group
+   starts), drill (Rustlings), RETRIEVE (a closed-book quiz of about 5 questions, no
+   cheatsheet), BUILD (one exercise crate in this workspace, from a blank file), REVIEW.
 3. **Every exercise has an oracle**: a hand-computed fixture, a simulator with known
    values, or an existing program to diff against. The borrow checker accepting your code
    proves it is memory-safe, not that it is right.
@@ -24,6 +25,14 @@
    the next module's Rustlings group, and a group finished early waits for its module's turn.
    *(Owner's instruction 2026-11-17: drilling ran ahead of building, so the build is the
    checkpoint that sets the pace.)*
+6. **Study by testing and spacing, not rereading.** Each session opens with 3 questions from
+   EARLIER modules, taken from the cheatsheet headings; each build opens with the 5-question
+   quiz. *(Established: Dunlosky et al. 2013 rated practice testing and distributed practice
+   highest utility and rereading low; the question counts are a judgment call.)*
+7. **Oracle first:** write the `assert_eq!` before the function body. *(Judgment call.)*
+8. **Hint ladder:** question, hint, shape, reveal. The Record table notes the highest rung
+   used per module; a build finished at "shape" or below is a pass, and one that needed
+   "reveal" is repeated smaller. *(Judgment call.)*
 
 ## General
 
@@ -91,10 +100,15 @@ previous module is reviewed, so the plan follows what you actually learned.
 3. Resume Rustlings at `enums1` (Module 3), then `modules`, `strings`, `hashmaps`, and build
    `m3-signals`.
 
+### Review checklist
+
+A module is reviewed when every oracle passes, you explain the module's decisions aloud, the
+compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one commit.
+
 ## Record
 
-| # | Module | Reviewed | Notes |
-|---|---|---|---|
-| 1 | m1-units | ⏳ current | Rustlings for Module 1 done; next: build the crate from a blank file |
-| 2 | m2-registers | ⏳ next | `move_semantics` and `structs` done early; build waits for Module 1's review |
-| 3 | m3-signals | pending | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
+| # | Module | Reviewed | Hints | Notes |
+|---|---|---|---|---|
+| 1 | m1-units | ⏳ current | | Rustlings for Module 1 done; next: the closed-book quiz, then the build from a blank file |
+| 2 | m2-registers | ⏳ next | | `move_semantics` and `structs` done early; build waits for Module 1's review |
+| 3 | m3-signals | pending | | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
