@@ -29,6 +29,10 @@
    EARLIER modules, taken from the cheatsheet headings; each build opens with the 5-question
    quiz. *(Established: Dunlosky et al. 2013 rated practice testing and distributed practice
    highest utility and rereading low; the question counts are a judgment call.)*
+   **The tutor asks each quiz question ONE at a time through the picker**, with the likely
+   answers as options and free text under "Other", and grades with real compiler output after
+   the last answer. *(Owner's instruction 2026-11-17: one question per prompt is easier to
+   answer.)*
 7. **Oracle first:** write the `assert_eq!` before the function body. *(Judgment call.)*
 8. **Hint ladder:** question, hint, shape, reveal. The Record table notes the highest rung
    used per module; a build finished at "shape" or below is a pass, and one that needed
