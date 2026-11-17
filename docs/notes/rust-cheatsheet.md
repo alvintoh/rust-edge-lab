@@ -11,6 +11,9 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - `i8` -128..127 | `i16` -32768..32767 | `u8` 0..255 | `u16` 0..65535.
 - Ask the compiler: `i8::MIN`, `i8::MAX`.
 - The default for `let x = 5` is `i32`. Use `u` for counts and percentages.
+- A literal like `8` has no fixed type: it becomes whichever integer type is expected (`u8`,
+  `u32`, `i64`), and `300` into a `u8` is a compile error (`literal out of range`). It never
+  turns into a float: `12` into an `f64` field fails, write `12.0`.
 
 ## Shadowing vs `mut`
 
@@ -71,3 +74,34 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - A function BORROWS when its parameter has `&` AND the caller writes `&` (`f(&word)`); it
   OWNS when neither does (`f(word)`, which moves `word` away). The two must agree.
 - `&` is for reading. To change a borrowed value you need `&mut`.
+
+## Structs: three kinds
+
+- Regular: `struct Reading { volts: f32 }`, made with `Reading { volts: 12.6 }`, read as
+  `r.volts`.
+- Tuple: `struct Range(i32, i32)`, made with `Range(10, 20)`, read by position as `span.0`.
+- Unit: `struct Marker;` has no fields, so it is made by its name alone (`let m = Marker;`).
+  It takes 0 bytes and can still implement a trait.
+- `..template` (struct update) fills in the fields you leave out: simple ones are copied, an
+  owned one like a `String` is MOVED, so the template's field is unusable afterwards unless you
+  gave your own value.
+
+## Text: `&str` vs `String`
+
+- `"text"` is a `&str`: borrowed text in the program (16 bytes: address + length). A `String`
+  field owns its text (24 bytes: address, length, capacity).
+- Rust will not convert silently (`expected String, found &str`). Write `String::from("text")`,
+  `"text".to_string()` or `"text".into()`; each copies the text into memory the `String` owns.
+- A text literal is always a `&str` (it does not adapt the way `8` does), and a number is free
+  to make while a `String` has to allocate and copy, which is why Rust makes you write it.
+- A `String` can grow (`push_str`); a `&str` cannot (`no method named push_str`).
+- A function that only reads text takes `&str`, and accepts a literal or a `&String`.
+
+## Methods: what `self` means
+
+- A method lives in `impl Type { ... }`. Its first parameter says how it uses the value:
+  `&self` borrows to read, `&mut self` borrows to change, `self` takes ownership and uses it up.
+- No `self` at all makes an associated function, called as `Type::new(...)`; `new` is the
+  convention for a constructor.
+- After a `self` method the original variable is gone (`borrow of moved value`); after `&self`
+  or `&mut self` it is still yours.
