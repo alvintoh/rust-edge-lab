@@ -8,6 +8,12 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - `iN`: -2^(N-1) to 2^(N-1)-1. `uN`: 0 to 2^N-1.
 - "Unsigned" means no sign, so no negatives. It does not mean either sign.
 - Same bits, two readings: `11001000` is 200 as `u8`, -56 as `i8`.
+- In an `iN` the leftmost bit is worth -2^(N-1) (`i8`: -128) and the other bits keep their
+  normal weights: `10000000` is -128, `11111111` is -1, `01111111` is 127. No minus sign is
+  stored (two's complement), and a `u8` with the same bits reads them as 128, 255 and 127.
+- The range is lopsided (`-128..=127`) because zero takes one of the non-negative slots.
+  `127i8 + 1` overflows: a debug build panics, a release build wraps to `-128`
+  (`01111111` + 1 = `10000000`).
 - `i8` -128..127 | `i16` -32768..32767 | `u8` 0..255 | `u16` 0..65535.
 - Ask the compiler: `i8::MIN`, `i8::MAX`.
 - The default for `let x = 5` is `i32`. Use `u` for counts and percentages.
