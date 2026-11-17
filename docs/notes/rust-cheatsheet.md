@@ -16,6 +16,11 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 
 - `let number = 3;` again makes a new variable that reuses the name, so its type can differ.
 - `mut` overwrites the same variable, whose type was fixed at the first `let`.
+- `mut` allows any change to what the variable holds: replacing an item (`a[0] = 9`) or
+  growing a `Vec` (`v.push(4)`). Without it: `error[E0594]: cannot assign to a[_], as a is
+  not declared as mutable`.
+- An array can only replace items (its length is in its type); a `Vec` can replace and
+  grow. Both need `mut`.
 
 ## Return value: the last expression
 
@@ -53,3 +58,16 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   `vec![1, 2, 3]` has three items.
 - The compiler's hint `use !` fixes the first error but can lead to a type error on the next line.
   Read the next error before trusting a hint.
+
+## References and borrowing
+
+- `let y = &mut x;` makes `y` a note (an address, 8 bytes on a 64-bit machine) pointing at
+  `x`'s data. `y.push(42)` changes the list `x` owns, not `y`.
+- At any moment a value has many `&` readers or ONE `&mut` writer, never both and never two
+  writers (`E0502`, `E0499`). A growing `Vec` can move to a new block, which would leave a
+  second pointer at the old spot.
+- A borrow lives from its `let` to its last use, so two `&mut` are fine if the first is
+  finished before the second starts.
+- A function BORROWS when its parameter has `&` AND the caller writes `&` (`f(&word)`); it
+  OWNS when neither does (`f(word)`, which moves `word` away). The two must agree.
+- `&` is for reading. To change a borrowed value you need `&mut`.
