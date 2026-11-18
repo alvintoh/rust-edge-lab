@@ -13,7 +13,11 @@ fn main() {
     assert_eq!(wh_to_kwh(0.0), 0.0);
     println!("ok  wh_to_kwh(0.0) = 0.0");
 
-    // celsius_to_fahrenheit: 0 C = 32 F, 100 C = 212 F, -40 C = -40 F.
+    // celsius_to_fahrenheit: 0 C = 32 F, 100 C = 212 F, -40 C = -40 F. Every step on the way
+    // (x 9, / 5, + 32) stays a whole number, which an f64 stores exactly, so == is safe here.
+    // A decimal input such as 37.0 or 3.7 is only a close neighbour in binary, so == can fail
+    // or pass by luck; for those, compare within a small tolerance, never by rounding to a
+    // whole number, which would hide a real error.
     assert_eq!(celsius_to_fahrenheit(0.0), 32.0);
     println!("ok  celsius_to_fahrenheit(0.0) = 32.0");
     assert_eq!(celsius_to_fahrenheit(100.0), 212.0);
