@@ -150,11 +150,11 @@ compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one
 
 | # | Idea | Missed | Status |
 |---|------|--------|--------|
-| 1 | a live reader (`&`) blocks a writer (`push`, `&mut`), error `E0502` | 2026-11-18, twice | open |
-| 2 | an integer literal never becomes a float: `3` into an `f64` needs `3.0` | 2026-11-18, twice | open |
-| 3 | lend with `&`, not `&mut`, when a function only reads | 2026-11-18, partial | open |
-| 4 | a value passed or assigned without `&` is moved | 2026-11-18, right on the retake | 1 of 2 |
-| 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, right on the retake | 1 of 2 |
+| 1 | a live reader (`&`) blocks a writer (`push`, `&mut`), error `E0502`: check the line it is created and the line of its LAST use, and look for a write between | 2026-11-18, three times; right once on a twin where the write came after the last use | open |
+| 2 | an integer literal never becomes a float: `3` into an `f64` needs `3.0`, but `n as f64` is a cast you write, so it is fine | 2026-11-18, three times; the twin over-applied the rule to `n as f64` | open |
+| 3 | lend with `&`, not `&mut`, when a function only reads | 2026-11-18, partial, then right | 1 of 2 |
+| 4 | a value passed or assigned without `&` is moved | 2026-11-18, wrong first, then right twice | 1 of 2 |
+| 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, wrong first, then right twice | 1 of 2 |
 | 6 | `i8` holds -128..=127 | 2026-11-17, right in the 2026-11-18 review | 1 of 2 |
 
 ## Record
