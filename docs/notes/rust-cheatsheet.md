@@ -19,7 +19,8 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - The default for `let x = 5` is `i32`. Use `u` for counts and percentages.
 - A literal like `8` has no fixed type: it becomes whichever integer type is expected (`u8`,
   `u32`, `i64`), and `300` into a `u8` is a compile error (`literal out of range`). It never
-  turns into a float: `12` into an `f64` field fails, write `12.0`.
+  turns into a float, in a struct field or a `let`: `12` into an `f64` field and
+  `let ratio: f64 = 3;` both fail with `expected f64, found integer`; write `12.0` and `3.0`.
 
 ## Shadowing vs `mut`
 
@@ -79,7 +80,15 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   finished before the second starts.
 - A function BORROWS when its parameter has `&` AND the caller writes `&` (`f(&word)`); it
   OWNS when neither does (`f(word)`, which moves `word` away). The two must agree.
-- `&` is for reading. To change a borrowed value you need `&mut`.
+- `&` is for reading. To change a borrowed value you need `&mut`. Pass `&` to a function that
+  only reads: `&mut` compiles only if the variable is declared `mut` (`E0596` otherwise) and
+  asks for write permission the function never uses.
+- A reader that is still used later blocks a writer, even a `push` on the very same variable:
+  `let r = &s; s.push('b'); println!("{r}");` fails with `E0502` (`push` itself is fine; the
+  reader `r` is alive across it). Finish with the reader before the write.
+- `let b = a;` MOVES an owned value such as a `String` or `Vec`: `a` is dead afterwards
+  (`E0382`, `borrow of moved value`). Numbers, bools and chars are copied instead, so both
+  names stay usable; an owned value needs `.clone()` to be copied.
 
 ## Structs: three kinds
 
