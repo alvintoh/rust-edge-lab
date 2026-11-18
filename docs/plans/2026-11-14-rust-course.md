@@ -32,7 +32,10 @@
    **The tutor asks each quiz question ONE at a time through the picker**, with the likely
    answers as options and free text under "Other", and grades with real compiler output after
    the last answer. *(Owner's instruction 2026-11-17: one question per prompt is easier to
-   answer.)*
+   answer.)* **Weak spots are re-asked first.** An idea answered wrongly in a quiz goes into
+   the "Weak spots" table and is asked at the start of every session until it is answered
+   correctly in two different sessions. *(Judgment call; it applies the spacing rule to what
+   you actually missed.)*
 7. **Oracle first:** write the `assert_eq!` before the function body. *(Judgment call.)*
 8. **Hint ladder:** question, hint, shape, reveal. The Record table notes the highest rung
    used per module; a build finished at "shape" or below is a pass, and one that needed
@@ -143,10 +146,21 @@ previous module is reviewed, so the plan follows what you actually learned.
 A module is reviewed when every oracle passes, you explain the module's decisions aloud, the
 compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one commit.
 
+### Weak spots (re-ask first)
+
+| # | Idea | Missed | Status |
+|---|------|--------|--------|
+| 1 | a live reader (`&`) blocks a writer (`push`, `&mut`), error `E0502` | 2026-11-18, twice | open |
+| 2 | an integer literal never becomes a float: `3` into an `f64` needs `3.0` | 2026-11-18, twice | open |
+| 3 | lend with `&`, not `&mut`, when a function only reads | 2026-11-18, partial | open |
+| 4 | a value passed or assigned without `&` is moved | 2026-11-18, right on the retake | 1 of 2 |
+| 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, right on the retake | 1 of 2 |
+| 6 | `i8` holds -128..=127 | 2026-11-17, right in the 2026-11-18 review | 1 of 2 |
+
 ## Record
 
 | # | Module | Reviewed | Hints | Notes |
 |---|---|---|---|---|
 | 1 | m1-units | ✅ 2026-11-18 | shape; one reveal (the celsius f64 comment) | quiz 4/5 (missed the `i8` range); 17 checks, every band edge proven by breaking it; Q3 first answered "round to a whole number", corrected to a tolerance; repeat smaller: write the tolerance check yourself in Module 2 |
-| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint written 2026-11-18; next: the closed-book quiz, then the build |
+| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint written 2026-11-18; closed-book quiz 2026-11-18: 3 of 8 (Module 1 spaced 2/3, Module 2 1/5), retake 2 of 5; next: re-ask the weak spots at the next session start, build after 4 of 5 |
 | 3 | m3-signals | pending | | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
