@@ -159,17 +159,20 @@ compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one
 
 | # | Idea | Missed | Status |
 |---|------|--------|--------|
-| 1 | a live reader (`&`) blocks a writer (`push`, `&mut`), error `E0502`: check the line it is created and the line of its LAST use, and look for a write between | 2026-11-18, three times; then right on a twin where the write came after the last use and on a loop that hides the reader (`for x in &v { v.push(*x); }`) | 1 of 2 |
-| 2 | an integer literal never becomes a float: `3` into an `f64` needs `3.0`, but `n as f64` is a cast you write, so it is fine | 2026-11-18, three times; the twin over-applied the rule to `n as f64`; then right on a two-argument call (`area(3.0, 4)`) and stated the cast rule himself | 1 of 2 |
-| 3 | lend with `&`, not `&mut`, when a function only reads | 2026-11-18, partial, then right | 1 of 2 |
-| 4 | a value passed or assigned without `&` is moved | 2026-11-18, wrong first, then right twice | 1 of 2 |
-| 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, wrong first, then right twice | 1 of 2 |
-| 6 | `i8` holds -128..=127 | 2026-11-17, right in the 2026-11-18 review | 1 of 2 |
+| 1 | a live reader (`&`) blocks a writer (`push`, `&mut`), error `E0502`: check the line it is created and the line of its LAST use, and look for a write between | 2026-11-18, three times; then right on a twin where the write came after the last use and on a loop that hides the reader (`for x in &v { v.push(*x); }`); 2026-11-19 right (a slice read across `clear`) | closed 2026-11-19 |
+| 2 | an integer literal never becomes a float: `3` into an `f64` needs `3.0`, but `n as f64` is a cast you write, so it is fine | 2026-11-18, three times; the twin over-applied the rule to `n as f64`; then right on a two-argument call (`area(3.0, 4)`) and stated the cast rule himself; 2026-11-19 right (a struct field `amps: 3`) | closed 2026-11-19 |
+| 3 | lend with `&`, not `&mut`, when a function only reads | 2026-11-18, partial, then right; 2026-11-19 right | closed 2026-11-19 |
+| 4 | a value passed or assigned without `&` is moved | 2026-11-18, wrong first, then right twice; 2026-11-19 right (`len` then a move) | closed 2026-11-19 |
+| 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, wrong first, then right twice; 2026-11-19 right | closed 2026-11-19 |
+| 6 | `i8` holds -128..=127 | 2026-11-17, right in the 2026-11-18 review; 2026-11-19 right | closed 2026-11-19 |
+
+Retake 2026-11-19: 6 of 6. The first four questions all had B as the correct letter (a quiz
+defect, since fixed); each idea also has a correct answer on an unbiased question.
 
 ## Record
 
 | # | Module | Reviewed | Hints | Notes |
 |---|---|---|---|---|
 | 1 | m1-units | ✅ 2026-11-18 | shape; one reveal (the celsius f64 comment) | quiz 4/5 (missed the `i8` range); 17 checks, every band edge proven by breaking it; Q3 first answered "round to a whole number", corrected to a tolerance; repeat smaller: write the tolerance check yourself in Module 2 |
-| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint written 2026-11-18; closed-book quiz 2026-11-18: 3 of 8 (Module 1 spaced 2/3, Module 2 1/5), retake 2 of 5; next: re-ask the weak spots at the next session start, build after 4 of 5 |
+| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint written 2026-11-18; closed-book quiz 2026-11-18: 3 of 8 (Module 1 spaced 2/3, Module 2 1/5), retake 2 of 5; retake 2026-11-19: 6 of 6, all weak spots closed; empty crate set up; next: the build |
 | 3 | m3-signals | pending | | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
