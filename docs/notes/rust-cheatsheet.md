@@ -16,7 +16,8 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   (`01111111` + 1 = `10000000`).
 - `i8` -128..127 | `i16` -32768..32767 | `u8` 0..255 | `u16` 0..65535.
 - Ask the compiler: `i8::MIN`, `i8::MAX`.
-- The default for `let x = 5` is `i32`. Use `u` for counts and percentages.
+- The default for `let x = 5` is `i32`, and for `1.5` it is `f64`. Which type for which job:
+  see the table after this section.
 - A literal like `8` has no fixed type: it becomes whichever integer type is expected (`u8`,
   `u32`, `i64`), and `300` into a `u8` is a compile error (`literal out of range`). It never
   turns into a float, in a struct field or a `let`: `12` into an `f64` field and
@@ -24,6 +25,17 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - How to check a value going into an `f64` by eye: ask what TYPE it has. A literal with no
   point, or any integer variable, is an integer type and does not fit an `f64`. Add the point
   (`7.0`) or convert in writing (`n as f64`, `f64::from(n)`).
+
+## Which number type for which job
+
+| Job | Type | Why |
+|-----|------|-----|
+| count, length, index | `usize` | `v.len()` is a `usize` and `v[i]` needs one (an `i32` index is `E0277`); it cannot go below 0, so `2usize - 5` is an overflow |
+| a whole number with no other constraint | `i32` | the default |
+| whole numbers beyond about 2 billion, or sums that grow | `i64` | an `i32` stops at 2,147,483,647 |
+| a known small range (a percentage, a byte, a register) | the smallest `uN` that fits (`u8`, `u16`) | the range is in the type |
+| a measurement (volts, temperature, physics) | `f64` | the default float; a tiny rounding error is harmless |
+| money | whole cents as an integer, or an exact decimal type | an `f64` stores `0.1` as a close neighbour |
 
 ## Shadowing vs `mut`
 
