@@ -33,7 +33,11 @@
    answer by letter in chat) and **grades each answer with real compiler output before asking
    the next**, then gives a running score. *(Owner's instructions 2026-11-17 and 2026-11-19:
    one question per prompt is easier to answer, and checking after every question is easier to
-   learn from than a grade at the end; a judgment call.)* **Weak spots are re-asked first.** An idea answered wrongly in a quiz goes into
+   learn from than a grade at the end; a judgment call.)* **The tutor shuffles the options so
+   the correct letter cannot be guessed from a pattern, and checks the letters afterwards: a
+   run of the same correct letter is a defect in the quiz, not a skill.** *(Owner's catch
+   2026-11-19: the first four retake answers were all B; a judgment call.)* **Weak spots are
+   re-asked first.** An idea answered wrongly in a quiz goes into
    the "Weak spots" table and is asked at the start of every session until it is answered
    correctly in two different sessions. *(Judgment call; it applies the spacing rule to what
    you actually missed.)*
