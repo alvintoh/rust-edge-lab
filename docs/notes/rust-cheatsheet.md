@@ -21,6 +21,9 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   `u32`, `i64`), and `300` into a `u8` is a compile error (`literal out of range`). It never
   turns into a float, in a struct field or a `let`: `12` into an `f64` field and
   `let ratio: f64 = 3;` both fail with `expected f64, found integer`; write `12.0` and `3.0`.
+- How to check a value going into an `f64` by eye: ask what TYPE it has. A literal with no
+  point, or any integer variable, is an integer type and does not fit an `f64`. Add the point
+  (`7.0`) or convert in writing (`n as f64`, `f64::from(n)`).
 
 ## Shadowing vs `mut`
 
@@ -86,6 +89,10 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - A reader that is still used later blocks a writer, even a `push` on the very same variable:
   `let r = &s; s.push('b'); println!("{r}");` fails with `E0502` (`push` itself is fine; the
   reader `r` is alive across it). Finish with the reader before the write.
+- How to check any `&` by eye: write down the line that creates it and the line that uses it
+  LAST. If a write (`push`, `&mut`, an assignment) sits between those two lines, it fails with
+  `E0502`. Fixes: use the reader before the write, take the reader after the write, or copy
+  the value out (`let copy = v[1];`) so nothing is borrowed.
 - `let b = a;` MOVES an owned value such as a `String` or `Vec`: `a` is dead afterwards
   (`E0382`, `borrow of moved value`). Numbers, bools and chars are copied instead, so both
   names stay usable; an owned value needs `.clone()` to be copied.
