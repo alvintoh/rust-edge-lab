@@ -29,10 +29,11 @@
    EARLIER modules, taken from the cheatsheet headings; each build opens with the 5-question
    quiz. *(Established: Dunlosky et al. 2013 rated practice testing and distributed practice
    highest utility and rereading low; the question counts are a judgment call.)*
-   **The tutor asks each quiz question ONE at a time through the picker**, with the likely
-   answers as options and free text under "Other", and grades with real compiler output after
-   the last answer. *(Owner's instruction 2026-11-17: one question per prompt is easier to
-   answer.)* **Weak spots are re-asked first.** An idea answered wrongly in a quiz goes into
+   **The tutor asks each quiz question ONE at a time** (the code in the message text, the
+   answer by letter in chat) and **grades each answer with real compiler output before asking
+   the next**, then gives a running score. *(Owner's instructions 2026-11-17 and 2026-11-19:
+   one question per prompt is easier to answer, and checking after every question is easier to
+   learn from than a grade at the end; a judgment call.)* **Weak spots are re-asked first.** An idea answered wrongly in a quiz goes into
    the "Weak spots" table and is asked at the start of every session until it is answered
    correctly in two different sessions. *(Judgment call; it applies the spacing rule to what
    you actually missed.)*
