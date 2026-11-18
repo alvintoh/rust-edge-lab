@@ -104,6 +104,10 @@ and 5.3, named when they matter; the matching Rustlings are done.
 **Build:** `cargo new m2-registers` at the repo root; `main` checks each function against
 hand-computed values with `assert_eq!` and prints a line per check.
 
+**Set up (done 2026-11-18):** the empty `m2-registers` crate exists and prints
+`Hello, world!`; `cargo new` added it to the workspace's `members` itself. Run it from the
+repo root with `cargo run -p m2-registers`. The build waits for the weak-spots retake.
+
 Functions to create (bodies are yours):
 
     fn combine_registers(high: u16, low: u16) -> u32   // two 16-bit registers, one 32-bit value

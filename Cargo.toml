@@ -1,4 +1,4 @@
 [workspace]
 resolver = "3"
-members = ["m1-units"]
+members = ["m1-units", "m2-registers"]
 exclude = ["rustlings"]

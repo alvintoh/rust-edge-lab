@@ -5,3 +5,7 @@ version = 4
 [[package]]
 name = "m1-units"
 version = "0.1.0"
+
+[[package]]
+name = "m2-registers"
+version = "0.1.0"
