@@ -113,6 +113,6 @@ compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one
 
 | # | Module | Reviewed | Hints | Notes |
 |---|---|---|---|---|
-| 1 | m1-units | ⏳ current | | Rustlings for Module 1 done; next: the closed-book quiz, then the build from a blank file |
-| 2 | m2-registers | ⏳ next | | `move_semantics` and `structs` done early; build waits for Module 1's review |
+| 1 | m1-units | ✅ 2026-11-18 | shape; one reveal (the celsius f64 comment) | quiz 4/5 (missed the `i8` range); 17 checks, every band edge proven by breaking it; Q3 first answered "round to a whole number", corrected to a tolerance; repeat smaller: write the tolerance check yourself in Module 2 |
+| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint to be written into this plan |
 | 3 | m3-signals | pending | | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
