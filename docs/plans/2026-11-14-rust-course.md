@@ -92,9 +92,43 @@ Functions to create (bodies are yours):
 **Done when:** `cargo run -p m1-units` prints every check passing, and you can explain
 why `f64` equality is risky.
 
+### Module 2 — `m2-registers`
+
+**Quiz first:** a closed-book check of about 5 questions (ownership, borrowing, struct kinds,
+`&self`), one at a time, plus 3 spaced questions from Module 1. **Read:** Book 4.1, 4.2, 5.1
+and 5.3, named when they matter; the matching Rustlings are done.
+
+**Build:** `cargo new m2-registers` at the repo root; `main` checks each function against
+hand-computed values with `assert_eq!` and prints a line per check.
+
+Functions to create (bodies are yours):
+
+    fn combine_registers(high: u16, low: u16) -> u32   // two 16-bit registers, one 32-bit value
+    fn as_signed(raw: u16) -> i16                      // the same 16 bits read as signed
+    struct Reading { raw: u16, divisor: u16 }          // a whole number plus a scale
+    impl Reading {
+        fn new(raw: u16, divisor: u16) -> Self
+        fn value(&self) -> f64                         // raw / divisor
+    }
+
+Pick hand-computed cases such as: registers that make 65536, the largest `u32`, `65535` read
+as signed, and `1263` with divisor `100`.
+
+**Decisions left to you:**
+1. Which register is the high half. Modbus fixes byte order inside a register but not the
+   order of two registers carrying a 32-bit value, which varies by device (secondary sources;
+   confirm with the device manual). How does the name or a comment say which order you use?
+2. What `Reading::new` does for a divisor of 0 (`Package::new` panicked; errors come in Module 4).
+3. How you compare `value()`, and you write the tolerance check yourself (the repeat-smaller
+   task from Module 1).
+4. Whether `raw` is `u16` or `i16` when a value can be negative.
+
+**Done when:** `cargo run -p m2-registers` prints every check passing, one tolerance check is
+yours, and you can explain why `65535` can mean `-1` and why `value` takes `&self`.
+
 ### Later modules
 
-Each module's functions, decisions and done-when check are written here when the
+Each later module's functions, decisions and done-when check are written here when the
 previous module is reviewed, so the plan follows what you actually learned.
 
 ### Order from here (2026-11-17)
@@ -114,5 +148,5 @@ compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one
 | # | Module | Reviewed | Hints | Notes |
 |---|---|---|---|---|
 | 1 | m1-units | ✅ 2026-11-18 | shape; one reveal (the celsius f64 comment) | quiz 4/5 (missed the `i8` range); 17 checks, every band edge proven by breaking it; Q3 first answered "round to a whole number", corrected to a tolerance; repeat smaller: write the tolerance check yourself in Module 2 |
-| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint to be written into this plan |
+| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint written 2026-11-18; next: the closed-book quiz, then the build |
 | 3 | m3-signals | pending | | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
