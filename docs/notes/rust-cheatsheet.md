@@ -4,10 +4,35 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 
 ## Integer types: range and sign
 
-- `iN` is signed, `uN` is unsigned. `N` is the bit count: 2^N patterns.
+- `iN` is signed, `uN` is unsigned. `N` is the bit count: 2^N patterns. The letters: `i` is
+  "integer", which is signed by default as in maths; `u` is "unsigned". There is no `s16`.
+- Only the LEFTMOST bit's worth differs between `u16` and `i16` (+32768 vs -32768); every
+  other bit is worth the same, and no bit flips. `65535` is all 1s: 32768 + 32767 = 65535 as
+  `u16`, -32768 + 32767 = -1 as `i16`.
 - `iN`: -2^(N-1) to 2^(N-1)-1. `uN`: 0 to 2^N-1.
 - "Unsigned" means no sign, so no negatives. It does not mean either sign.
 - Same bits, two readings: `11001000` is 200 as `u8`, -56 as `i8`.
+- Two concepts, read off the name: the NUMBER decides storage, the LETTER decides reading.
+
+  | Concept | `u16` | `i16` |
+  |---------|-------|-------|
+  | storage (bits, patterns) | 16 bits, 65,536 | 16 bits, 65,536 (same) |
+  | reading (left bit worth) | +32768 | -32768 (differs) |
+  | range (every reading) | 0..=65535 | -32768..=32767 |
+
+- `uN` and `iN` read the SAME bits differently: only the left bit's worth changes (`u8` +128,
+  `i8` -128; `u16` +32768, `i16` -32768).
+- Range vs one value: `u8` labels the 256 patterns 0..=255 and `i8` labels the same 256
+  patterns -128..=127. That is the range. Converting ONE value keeps its pattern.
+- `x as i8` / `raw as i16` moves no bits. A value with the left bit 0 (`u8` 0..=127) stays
+  the same; one with the left bit 1 (`u8` 128..=255) turns negative: 128 → -128, 200 → -56,
+  255 → -1. Same for 16 bits: 32767 stays, 32768 → -32768, 65535 → -1.
+- A number outside a type's range can never be stored in it: `let x: i8 = 129;` fails with
+  `literal out of range for i8` (the `i8` maximum is 127). Use the next size up, `i16`. There
+  is no `i9`: sizes double (8, 16, 32, 64, 128) because memory comes in whole bytes.
+  Converting a `u8` 129 with `as i8` does compile, but gives -127 (same bits), not 129.
+- By hand: `11111111` is 128+64+32+16+8+4+2+1 = 255 as `u8`, and -128+64+32+16+8+4+2+1 = -1
+  as `i8`.
 - In an `iN` the leftmost bit is worth -2^(N-1) (`i8`: -128) and the other bits keep their
   normal weights: `10000000` is -128, `11111111` is -1, `01111111` is 127. No minus sign is
   stored (two's complement), and a `u8` with the same bits reads them as 128, 255 and 127.
@@ -53,6 +78,42 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - A `;` discards the value, so the block gives `()` instead.
 - `fn f() -> i32 { n * n; }` fails: expected `i32`, found `()`.
 - No `-> T` in the signature means the function returns `()`.
+
+## Printing: `println!` and `{}`
+
+- `println!` is a macro (the `!`): at compile time it pairs each `{}` with the next value after
+  the text, in order. `println!("{} {}", 10 + 1, f(2))` evaluates each value, then prints it.
+- `{name}` prints a variable by name, with no value after the comma.
+- The count is checked when compiling: two `{}` and one value fails with
+  `2 positional arguments in format string, but there is 1 argument`.
+- A value in `{}` must implement `Display`. Numbers and text do; your own struct does not
+  (`E0277: Reading doesn't implement std::fmt::Display`).
+- A type is not a value: `f(65535, u32)` fails with `E0423: cannot find value u32`.
+
+## Comments: `//`, `///`, `//!`
+
+| Kind | For | Shown by |
+|------|-----|----------|
+| `//` | notes for whoever edits the code | nobody; tools ignore it |
+| `///` | documents the item below it (fn, struct, field) | `cargo doc` and the editor's hover |
+| `//!` | documents the whole file, crate or module | `cargo doc`, as the front page |
+
+- A `///` opens with a one-sentence summary of what the item does, then details, then
+  sections where they apply: `# Examples`, `# Panics`, `# Errors` (rustdoc book; Rust API
+  Guidelines). Questions and to-do notes go in `//`, never `///`.
+- An "oracle" is a testing word, not a Rust one: the source of the expected answer, worked
+  out without the code under test (by hand, a device display, another program). In
+  `assert_eq!(f(1, 0), 65536)` the `65536` is the oracle.
+
+## Unfinished code: `todo!()`
+
+- `todo!()` fits any return type, so the file compiles; calling it panics with
+  `not yet implemented` at that line. The std docs: "a placeholder to let your code pass type
+  analysis".
+- `todo!()` means "I will write this"; `unimplemented!()` means "not provided", maybe on
+  purpose.
+- Use it only while writing. Finished code has none: it always panics. Clippy's opt-in
+  `clippy::todo` lint finds leftovers.
 
 ## Where to look things up
 
