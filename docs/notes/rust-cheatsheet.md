@@ -221,7 +221,15 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - A text literal is always a `&str` (it does not adapt the way `8` does), and a number is free
   to make while a `String` has to allocate and copy, which is why Rust makes you write it.
 - A `String` can grow (`push_str`); a `&str` cannot (`no method named push_str`).
-- A function that only reads text takes `&str`, and accepts a literal or a `&String`.
+- A function that only reads text takes `&str`, and accepts a literal or a `&String`
+  (`f(&word)`): Rust turns `&String` into `&str` for you (deref coercion, Book 15.2).
+- A reading function never changes the original; its result comes back as a NEW value:
+  `let loud = shout(&word);` leaves `word` as `green` and gives `loud` = `GREEN`.
+
+  | Parameter | Changes the caller's value? | Result comes back as |
+  |-----------|-----------------------------|----------------------|
+  | `&str` / `&T` | no, read only | a new return value |
+  | `&mut String` / `&mut T` | yes, in place | often nothing; the original IS the result |
 
 ## Methods: what `self` means
 
