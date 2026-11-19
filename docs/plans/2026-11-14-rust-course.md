@@ -68,11 +68,11 @@
 |---|---|---|---|---|
 | 1 | 1–2 | Book ch. 1–3; Rustlings intro, variables, functions, if, primitive_types | `m1-units`: unit conversions | known values, checked with `assert_eq!` |
 | 2 | 3–4 | ch. 4–5; Rustlings move_semantics, structs | `m2-registers`: 32-bit values from two registers; a scaled `Reading` | hand-computed cases |
-| 3 | 5–6 | ch. 6–8; Rustlings enums, modules, vecs, strings, hashmaps | `m3-signals`: Modbus function codes as an enum; a deadband filter | fixtures |
-| 4 | 7–8 | ch. 9–10; Rustlings error_handling, generics, traits, lifetimes | `m4-regmap`: parse a register map from CSV | a known map, including bad rows |
+| 3 | 5–6 | ch. 6–8; Rustlings enums, strings, modules, hashmaps, quiz2, options (vecs done early) | `m3-signals`: Modbus function codes as an enum; a deadband filter; latest value per register | fixtures |
+| 4 | 7–8 | ch. 9–10; Rustlings error_handling, generics, traits, quiz3, lifetimes | `m4-regmap`: parse a register map from CSV | a known map, including bad rows |
 | 5 | 9–10 | ch. 11, 13; Rustlings tests, iterators | `m5-summary`: min/max/avg/last/count over a window | hand-computed |
-| 6 | 11–12 | ch. 12 (the CLI project) | `m6-contrast`: a Rust port of a WCAG contrast checker | the original Python tool, run on the same public SVGs |
-| 7 | 13–14 | ch. 15–16; the Tokio tutorial | `m7-poller`: fake sensor every second → channel → deadband → summary | a deterministic fake sensor |
+| 6 | 11–12 | ch. 12 (the CLI project); Rustlings conversions, macros, clippy | `m6-contrast`: a Rust port of a WCAG contrast checker | the original Python tool, run on the same public SVGs |
+| 7 | 13–14 | ch. 15–16; Rustlings smart_pointers, threads; the Tokio tutorial | `m7-poller`: fake sensor every second → channel → deadband → summary | a deterministic fake sensor |
 | 8 | 15–16 | `tokio-modbus` docs | `m8-modbus-tcp`: read and decode registers from a Modbus TCP simulator | the simulator's configured values |
 | 9 | 17+ | The Embedded Rust Book (QEMU chapter first) | switch Module 8 to RTU over RS-485 on a real controller | the controller's own display |
 
@@ -151,17 +151,72 @@ as signed, and `1263` with divisor `100`.
 **Done when:** `cargo run -p m2-registers` prints every check passing, one tolerance check is
 yours, and you can explain why `65535` can mean `-1` and why `value` takes `&self`.
 
+### Module 3 — `m3-signals`
+
+**Drill, in this order** (Rustlings, run from `rustlings/`); the tutor names the Book section
+as each group starts:
+
+| # | Group | Book |
+|---|---|---|
+| 1 | `enums1-3` | 6.1, 6.2 |
+| 2 | `strings1-4` | 8.2 |
+| 3 | `modules1-3` | 7.1–7.4 |
+| 4 | `hashmaps1-3` | 8.3 |
+| 5 | `quiz2` | (mixes the groups above) |
+| 6 | `options1-3` | 6.1 (`Option`), 6.3 |
+
+**Quiz first** (about 5, one at a time, after the drill): an enum with data and a `match`
+that must cover every variant; `String` vs `&str` and why a `String` cannot be indexed;
+`pub` and module privacy; `HashMap` `insert`/`get` and why `get` returns an `Option`;
+handling an `Option` with `match` or `if let`. Plus 3 spaced from Modules 1–2, after the open
+weak spots.
+
+**Build:** `cargo new m3-signals` at the repo root; the tutor scaffolds and explains each item.
+
+Functions to create (bodies are yours):
+
+    enum FunctionCode { ReadHoldingRegisters, ReadInputRegisters, WriteSingleRegister }
+    impl FunctionCode {
+        fn from_byte(byte: u8) -> Option<FunctionCode>  // 0x03, 0x04, 0x06; anything else None
+        fn to_byte(&self) -> u8
+        fn is_write(&self) -> bool
+    }
+    struct Deadband { threshold: f64, last_sent: Option<f64> }
+    impl Deadband {
+        fn new(threshold: f64) -> Self
+        fn should_send(&mut self, value: f64) -> bool   // the first value, then a big enough change
+    }
+    fn latest_by_register(readings: &[(u16, f64)]) -> HashMap<u16, f64>
+
+Hand-computed cases: `from_byte(0x03)` is `Some(ReadHoldingRegisters)`, `from_byte(0x2B)` is
+`None`, `to_byte` round-trips every variant; a deadband of 0.5 over
+`12.0, 12.2, 12.6, 12.5, 13.2` sends `12.0, 12.6, 13.2`; `latest_by_register` over
+`(100, 12.0), (101, 3.0), (100, 12.5)` gives `{100: 12.5, 101: 3.0}`. The function codes
+come from the Modbus application protocol specification (0x03 read holding registers, 0x04
+read input registers, 0x06 write single register; an error reply adds 0x80).
+
+**Decisions left to you:**
+1. What `from_byte` returns for an unknown byte, and for an error reply such as `0x83`.
+2. Whether a change of exactly the threshold is sent (`>` or `>=`), with a check on each side
+   of that edge (`12.0` then `12.5` is a difference of exactly 0.5).
+3. Why `should_send` takes `&mut self` while `to_byte` takes `&self` (weak spot 7).
+4. What `latest_by_register` keeps when one register appears twice.
+
+**Done when:** `cargo run -p m3-signals` prints every check passing, the threshold edge has a
+check on both sides, and you can explain why `from_byte` returns an `Option` and why
+`should_send` needs `&mut self`.
+
 ### Later modules
 
-Each later module's functions, decisions and done-when check are written here when the
-previous module is reviewed, so the plan follows what you actually learned.
+Each later module's drill, quiz topics, blueprint, decisions and done-when are written here
+when the previous module is reviewed, so the plan follows what you actually learned.
 
-### Order from here (2026-11-17)
+### Order from here (2026-11-19)
 
-1. Build `m1-units` from a blank file with `assert_eq!` oracles, then review it.
-2. Write Module 2's blueprint into this plan, build `m2-registers`, review it.
-3. Resume Rustlings at `enums1` (Module 3), then `modules`, `strings`, `hashmaps`, and build
-   `m3-signals`.
+1. ✅ Build and review `m1-units` (2026-11-18).
+2. ✅ Build and review `m2-registers` (2026-11-19).
+3. 👈 Module 3: open with weak spot 7, then the drill above from `enums1`, the quiz, the
+   `m3-signals` build, the review.
 
 ### Review checklist
 
