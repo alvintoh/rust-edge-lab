@@ -42,6 +42,18 @@
    correctly in two different sessions. *(Judgment call; it applies the spacing rule to what
    you actually missed.)*
 7. **Oracle first:** write the `assert_eq!` before the function body. *(Judgment call.)*
+   **The tutor scaffolds each build file:** the signatures, structs and `impl` blocks with
+   `todo!()` bodies, a comment on each item carrying its decision and leading question, and
+   the hand-computed cases listed as comments in `main`. The `assert_eq!` checks and every
+   body stay yours. *(Owner's instruction 2026-11-19: the shape is easier to follow in the
+   file than in chat; a judgment call.)*
+   **Before you write each item, the tutor explains it in full, in this order:** what the
+   real-world thing is (a register, a scale), why the item exists, a run example with its
+   real output pasted, what the item does read straight off that output, what is already in
+   your file and what it does, then numbered steps that name the file and line. No item is
+   handed over as a signature alone. *(Owner's instruction 2026-11-19, after
+   `combine_registers` was confusing as a signature plus a formula and clear once explained
+   this way; a judgment call.)*
 8. **Hint ladder:** question, hint, shape, reveal. The Record table notes the highest rung
    used per module; a build finished at "shape" or below is a pass, and one that needed
    "reveal" is repeated smaller. *(Judgment call.)*
@@ -111,7 +123,8 @@ hand-computed values with `assert_eq!` and prints a line per check.
 
 **Set up (done 2026-11-18):** the empty `m2-registers` crate exists and prints
 `Hello, world!`; `cargo new` added it to the workspace's `members` itself. Run it from the
-repo root with `cargo run -p m2-registers`. The build waits for the weak-spots retake.
+repo root with `cargo run -p m2-registers`. Scaffolded 2026-11-19: `src/main.rs` holds every
+signature below with a `todo!()` body and the cases as comments in `main`.
 
 Functions to create (bodies are yours):
 
@@ -165,6 +178,7 @@ compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one
 | 4 | a value passed or assigned without `&` is moved | 2026-11-18, wrong first, then right twice; 2026-11-19 right (`len` then a move) | closed 2026-11-19 |
 | 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, wrong first, then right twice; 2026-11-19 right | closed 2026-11-19 |
 | 6 | `i8` holds -128..=127 | 2026-11-17, right in the 2026-11-18 review; 2026-11-19 right | closed 2026-11-19 |
+| 7 | plain `self` MOVES the value (the caller's variable is gone); it does not write. Writing is `&mut self` | 2026-11-19, Module 2 explain question: "transfers ownership from read to write"; then right on a twin (`reset(&mut self)`, `retire(self)`, then a read) | open: re-ask next session |
 
 Retake 2026-11-19: 6 of 6. The first four questions all had B as the correct letter (a quiz
 defect, since fixed); each idea also has a correct answer on an unbiased question.
@@ -174,5 +188,5 @@ defect, since fixed); each idea also has a correct answer on an unbiased questio
 | # | Module | Reviewed | Hints | Notes |
 |---|---|---|---|---|
 | 1 | m1-units | ✅ 2026-11-18 | shape; one reveal (the celsius f64 comment) | quiz 4/5 (missed the `i8` range); 17 checks, every band edge proven by breaking it; Q3 first answered "round to a whole number", corrected to a tolerance; repeat smaller: write the tolerance check yourself in Module 2 |
-| 2 | m2-registers | ⏳ current | | `move_semantics` and `structs` done early; blueprint written 2026-11-18; closed-book quiz 2026-11-18: 3 of 8 (Module 1 spaced 2/3, Module 2 1/5), retake 2 of 5; retake 2026-11-19: 6 of 6, all weak spots closed; empty crate set up; next: the build |
-| 3 | m3-signals | pending | | `vecs1-2` done early; `enums` onward wait for Modules 1 and 2 |
+| 2 | m2-registers | ✅ 2026-11-19 | shape; every body yours; two small reveals (a `65335` typo, the type `u32` passed as an argument) | quizzes 2026-11-18 3/8 and 2/5, retake 2026-11-19 6/6; 8 checks pass, tolerance check yours (`0.0001`); decisions: high register first (documented), divisor 0 panics, `raw: i16`, `divisor` back to `u16` after review; explain 1.5/2 (65535 → -1 right; `self` called a write, weak spot 7) |
+| 3 | m3-signals | ⏳ next | | `vecs1-2` done early; resume Rustlings at `enums1`; blueprint to be written into this plan |
