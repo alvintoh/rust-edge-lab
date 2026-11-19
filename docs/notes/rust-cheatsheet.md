@@ -181,6 +181,37 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   owned one like a `String` is MOVED, so the template's field is unusable afterwards unless you
   gave your own value.
 
+## Enums: one choice out of a fixed list
+
+- A struct is AND: every field, every time (leaving one out is `E0063: missing field`).
+  An enum is OR: exactly one variant at a time.
+
+  | | `struct` | `enum` |
+  |---|----------|--------|
+  | holds | all its fields at once | exactly one variant |
+  | reads as | volts and amps | Resize or Move or Quit |
+
+- A variant can carry data in the three struct shapes: none (`Quit`), by position
+  (`Echo(String)`, `ChangeColor(u8, u8, u8)`), or named (`Resize { width: u64, height: u64 }`).
+  Copy the shape `main` uses to make it, with each value replaced by its type.
+- Pick one with `Type::Variant`; a name not in the list is `E0599: no variant ... found`.
+- `#[derive(Debug)]` lets `{:?}` print it; `{}` does not work on an enum.
+- Use a struct when the thing always has all its parts, an enum when it is one of several
+  kinds.
+- Rust's enum is a "sum type" (one of several shapes); a struct is a "product type" (all of
+  its fields). Compared with other languages:
+
+  | Language | What "enum" means | Data per choice? | Every case checked? |
+  |----------|-------------------|------------------|---------------------|
+  | TypeScript `enum` | named constants (`Red = 0`) | no | no |
+  | TypeScript union (`{ kind: "fault"; code: number } \| ...`) | not called enum | yes | only with a `never` check |
+  | Go | no enum: `iota` constants, or an interface plus one struct per kind | interface only | no |
+  | Rust `enum` | one of several shapes | yes | yes: `match` fails with `E0004` |
+
+- `match` takes one arm per variant: `Event::Fault(code) => ...`. The pattern has the shape
+  that makes the value, with NEW variable names where the data goes. Missing a variant fails
+  with `E0004: non-exhaustive patterns`.
+
 ## Text: `&str` vs `String`
 
 - `"text"` is a `&str`: borrowed text in the program (16 bytes: address + length). A `String`
