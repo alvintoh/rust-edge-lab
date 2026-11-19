@@ -200,3 +200,16 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   convention for a constructor.
 - After a `self` method the original variable is gone (`borrow of moved value`); after `&self`
   or `&mut self` it is still yours.
+- `&mut self` is ONE thing, "borrow to write": it changes the caller's value without moving
+  ownership. Plain `self` does not write; it TAKES the value.
+
+  | Signature | Meaning | Caller's variable after |
+  |-----------|---------|-------------------------|
+  | `&self` | borrow to read | still yours |
+  | `&mut self` | borrow to read and write | still yours, maybe changed |
+  | `self` | take it | gone |
+
+- A `self` method is fine as the LAST use of the value. A number copied out before it survives:
+  `let x = b.level(); b.recycle();` then `x` works but `b.level()` fails with `E0382`.
+- Picking the signature: is the value used again after the call? Then borrow (`&…`). Does the
+  method change a field? Then `&mut`.
