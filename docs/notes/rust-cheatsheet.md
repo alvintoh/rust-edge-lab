@@ -231,6 +231,23 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   | `&str` / `&T` | no, read only | a new return value |
   | `&mut String` / `&mut T` | yes, in place | often nothing; the original IS the result |
 
+- Which one to use, by the job (parameters: Book 4.3, established; fields and returns follow
+  from ownership):
+
+  | Where | Use | Why |
+  |-------|-----|-----|
+  | function PARAMETER that only reads | `&str` | takes a literal, a `&String` or a slice; a `String` parameter would refuse a literal and take ownership |
+  | struct FIELD that keeps the text | `String` | the struct owns it; a `&str` field fails with `E0106: missing lifetime specifier` until lifetimes (Module 4) |
+  | RETURN, text built inside the function | `String` | new text has to be owned by whoever receives it |
+  | RETURN, a piece of an input | `&str` | a view into the input, nothing copied (`trim`, `&s[0..1]`) |
+
+- Deciding a value's type by eye (`strings4`): does the expression MAKE new text (`to_string`,
+  `String::from`, `to_owned`, `format!`, `replace`, `to_lowercase`) or POINT at existing text
+  (a literal, `.trim()`, `&s[a..b]`)? New is `String`, pointing is `&str`, and `.into()` is
+  whichever the receiver asks for. Do not pick by length or content: the type is fixed when
+  compiling.
+- Default: take `&str`, store `String`, return `String` when you built it.
+
 ## Methods: what `self` means
 
 - A method lives in `impl Type { ... }`. Its first parameter says how it uses the value:
