@@ -221,9 +221,22 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   | Go | no enum: `iota` constants, or an interface plus one struct per kind | interface only | no |
   | Rust `enum` | one of several shapes | yes | yes: `match` fails with `E0004` |
 
-- `match` takes one arm per variant: `Event::Fault(code) => ...`. The pattern has the shape
-  that makes the value, with NEW variable names where the data goes. Missing a variant fails
-  with `E0004: non-exhaustive patterns`.
+## `match`: pick one arm
+
+- `match` looks at a value and runs exactly ONE arm, the first whose pattern fits. In a loop it
+  chooses again for every item.
+- An arm is `pattern => result,`. For an enum the pattern has the shape that makes the value,
+  with NEW variable names where the data goes: `Event::Fault(code) => ...` unpacks the `u16`
+  into `code`; `Event::Reading { volts, amps } => ...` unpacks named fields.
+- It must cover EVERY case: a missing variant fails with `E0004: non-exhaustive patterns`.
+  For numbers or text, finish with `_ => ...` to catch the rest.
+- `match` is an expression: it produces a value, so `let result = match op { ... };` works. An
+  arm's last line has no `;` (the last-expression rule), and EVERY arm must give the same type
+  (`E0308: match arms have incompatible types`).
+- A typical shape (`quiz2`): `for (text, cmd) in input { let r = match cmd { A => ..., B(n) => ... };
+  out.push(r); }`.
+- Methods that return `&str` (like `trim`) need `.to_string()` in an arm whose siblings return
+  `String`, so the types agree.
 
 ## HashMap: look up by key
 
@@ -256,6 +269,20 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   `main` when only `mod panel` has the `use` fails with `E0425: cannot find function`.
 - `pub use` re-exports: the name becomes reachable from outside, as `delicious_snacks::fruit`
   in `modules2`. Without the `pub`, `E0603: constant import fruit is private`.
+- A module does not see what is outside it unless it asks. An enum written at the top of the
+  file and used inside `mod my_module` needs `use super::Command;` there, or it fails with
+  `E0425`/`E0433: cannot find type Command in this scope`.
+- Paths start from a place:
+
+  | Path | Starts from |
+  |------|-------------|
+  | `super::Op` | the level ABOVE this module (like `..`) |
+  | `self::fruits::PEAR` | this module's own child |
+  | `crate::power::battery::percent` | the root of the program (the file), from anywhere |
+  | `labels::describe` | a module reached by name from the level it sits in |
+
+  A test module reaches a function in a sibling module through the parent:
+  `use super::my_module::transformer;`.
 - `use` is not a copy and not a call: it adds a second name for the same item. The standard
   library works the same way: `use std::time::Duration;` brings in `Duration`.
 
