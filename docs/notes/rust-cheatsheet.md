@@ -89,6 +89,19 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - A value in `{}` must implement `Display`. Numbers and text do; your own struct does not
   (`E0277: Reading doesn't implement std::fmt::Display`).
 - A type is not a value: `f(65535, u32)` fails with `E0423: cannot find value u32`.
+- `{}` is the clean, user-facing form and needs `Display`; `{:?}` is the developer form that
+  shows the structure and needs `Debug`.
+
+  | Value | `{}` | `{:?}` |
+  |-------|------|--------|
+  | number, text | `12.4` | `12.4` |
+  | `Option` (what `map.get(k)` returns) | `E0277: Option<&f64> doesn't implement Display` | `Some(12.4)` or `None` |
+  | a `HashMap` or `Vec` | does not compile | `{"battery_v": 12.4}` |
+  | your own struct or enum | does not compile, unless you write `Display` | works after `#[derive(Debug)]` |
+
+- A lookup can fail, so `get` returns `Some(value)` or `None`, not the bare value. To print
+  just the number, unwrap it first (`map.get(k).unwrap()`), or handle both cases with `match`
+  (`options1-3`).
 
 ## Comments: `//`, `///`, `//!`
 
@@ -211,6 +224,23 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - `match` takes one arm per variant: `Event::Fault(code) => ...`. The pattern has the shape
   that makes the value, with NEW variable names where the data goes. Missing a variant fails
   with `E0004: non-exhaustive patterns`.
+
+## HashMap: look up by key
+
+- `HashMap<K, V>` finds a value by a key (`"battery_v"` → `12.4`); a `Vec` finds by position.
+  `use std::collections::HashMap;`, then `HashMap::new()`. `insert` changes the map, so the
+  variable needs `mut` (`E0596` otherwise).
+- `insert` on an existing key REPLACES the value; the size does not grow.
+- `get(&key)` returns `Some(value)` or `None`, never the bare value, because a lookup can fail.
+  `contains_key(&key)` is the plain yes/no.
+- Add only if missing: `map.entry(key).or_insert(v)` (an existing key is left alone).
+- Update from the old value: `*map.entry(key).or_insert(0) += n;`. `or_insert` returns a
+  `&mut V`, a borrow of the value inside the map, so `*` reaches the number
+  (`E0368: += cannot be applied to &mut u32` without it).
+- A struct value that implements `Default` starts at zero with `or_default()`, and its fields
+  are changed directly: `map.entry(team).or_default().goals_scored += n;` (no `*` needed).
+- A key type must derive `Hash`, `PartialEq` and `Eq` (a key enum, as in `hashmaps2`).
+- A map's order is not fixed: sort the entries before printing or comparing.
 
 ## Modules: `pub` and `use`
 
