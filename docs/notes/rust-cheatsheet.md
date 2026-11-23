@@ -212,6 +212,23 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   that makes the value, with NEW variable names where the data goes. Missing a variant fails
   with `E0004: non-exhaustive patterns`.
 
+## Modules: `pub` and `use`
+
+- Everything in a `mod` is private by default. `pub` makes one item visible from outside;
+  calling a private one fails with `E0603: function ... is private`. Code in the same module
+  can always use its private items. Only add `pub` to what the outside needs.
+- A nested module must be `pub` too, or its path is blocked (`E0603: module solar is private`).
+- `use` brings a path into scope so you write the short name: `use power::battery::percent;`
+  then `percent()` instead of `power::battery::percent()`.
+  - `as` renames: `use power::solar::watts as pv_watts;`
+  - `{}` groups one path on one line: `use std::time::{SystemTime, UNIX_EPOCH};`
+- A `use` only counts inside the module (or file) it is written in: using `percent()` in
+  `main` when only `mod panel` has the `use` fails with `E0425: cannot find function`.
+- `pub use` re-exports: the name becomes reachable from outside, as `delicious_snacks::fruit`
+  in `modules2`. Without the `pub`, `E0603: constant import fruit is private`.
+- `use` is not a copy and not a call: it adds a second name for the same item. The standard
+  library works the same way: `use std::time::Duration;` brings in `Duration`.
+
 ## Text: `&str` vs `String`
 
 - `"text"` is a `&str`: borrowed text in the program (16 bytes: address + length). A `String`
