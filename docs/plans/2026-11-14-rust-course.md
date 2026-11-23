@@ -233,7 +233,7 @@ compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one
 | 4 | a value passed or assigned without `&` is moved | 2026-11-18, wrong first, then right twice; 2026-11-19 right (`len` then a move) | closed 2026-11-19 |
 | 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, wrong first, then right twice; 2026-11-19 right | closed 2026-11-19 |
 | 6 | `i8` holds -128..=127 | 2026-11-17, right in the 2026-11-18 review; 2026-11-19 right | closed 2026-11-19 |
-| 7 | plain `self` MOVES the value (the caller's variable is gone); it does not write. Writing is `&mut self` | 2026-11-19, Module 2 explain question: "transfers ownership from read to write"; then right on a twin (`reset(&mut self)`, `retire(self)`, then a read); later 2026-11-19 wrong again (chose `self` for a method that does `+=` and is called twice; answer `&mut self`) | open: re-ask next session |
+| 7 | plain `self` MOVES the value (the caller's variable is gone); it does not write. Writing is `&mut self` | 2026-11-19, Module 2 explain question: "transfers ownership from read to write"; then right on a twin (`reset(&mut self)`, `retire(self)`, then a read); later 2026-11-19 wrong again (chose `self` for a method that does `+=` and is called twice; answer `&mut self`); 2026-11-23 right (`Counter`: `finish(self)` on line 3, then a use on line 4) | closed 2026-11-23 |
 
 Retake 2026-11-19: 6 of 6. The first four questions all had B as the correct letter (a quiz
 defect, since fixed); each idea also has a correct answer on an unbiased question.
