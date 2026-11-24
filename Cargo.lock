@@ -9,3 +9,7 @@ version = "0.1.0"
 [[package]]
 name = "m2-registers"
 version = "0.1.0"
+
+[[package]]
+name = "m3-signals"
+version = "0.1.0"
