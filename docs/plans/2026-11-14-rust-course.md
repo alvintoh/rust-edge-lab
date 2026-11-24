@@ -75,6 +75,7 @@
 | 7 | 13–14 | ch. 15–16; Rustlings smart_pointers, threads; the Tokio tutorial | `m7-poller`: fake sensor every second → channel → deadband → summary | a deterministic fake sensor |
 | 8 | 15–16 | `tokio-modbus` docs | `m8-modbus-tcp`: read and decode registers from a Modbus TCP simulator | the simulator's configured values |
 | 9 | 17+ | The Embedded Rust Book (QEMU chapter first) | switch Module 8 to RTU over RS-485 on a real controller | the controller's own display |
+| 10 | after 9 | read a vendor's C example (an INA226 driver or a Modbus RTU reference); learn to READ C, never write it | `m10-c-port`: port it to Rust | the C program's output on the same inputs |
 
 ### Module 1 — `m1-units`
 
