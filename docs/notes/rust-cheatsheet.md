@@ -242,7 +242,8 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 
 - `Option<T>` is an enum with two variants: `Some(value)` (a value is there) and `None`
   (nothing). A function returns it when "no answer" is a normal outcome (`HashMap::get`, a
-  lookup, a reading that may not exist). `Some(5)` and `5` are different types, so
+  lookup, a reading that may not exist). `HashMap::get` and `Vec::pop` ALWAYS return one, even
+  when the key or item is there. `Some(5)` and `5` are different types, so
   `assert_eq!(opt, 5)` fails with `E0308: expected Option<u16>, found integer`.
 - Get the value out with `.unwrap()`: `Some(4).unwrap()` is `4`, but `None.unwrap()` PANICS
   (`called Option::unwrap() on a None value`). Use it only where `None` cannot happen.
@@ -266,8 +267,10 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   `use std::collections::HashMap;`, then `HashMap::new()`. `insert` changes the map, so the
   variable needs `mut` (`E0596` otherwise).
 - `insert` on an existing key REPLACES the value; the size does not grow.
-- `get(&key)` returns `Some(value)` or `None`, never the bare value, because a lookup can fail.
-  `contains_key(&key)` is the plain yes/no.
+- `get(&key)` ALWAYS returns an `Option`: `Some(value)` or `None`, never the bare value, because
+  a lookup can fail. Printing it with `{:?}` shows the wrapper (`Some(12.5)`), and `{}` does not
+  compile (`Option` has no Display, `E0277`). To use the number, take it out of the `Some`
+  (`unwrap`, `if let`, `match`). `contains_key(&key)` is the plain yes/no.
 - Add only if missing: `map.entry(key).or_insert(v)` (an existing key is left alone).
 - Update from the old value: `*map.entry(key).or_insert(0) += n;`. `or_insert` returns a
   `&mut V`, a borrow of the value inside the map, so `*` reaches the number
