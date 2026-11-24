@@ -238,6 +238,28 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - Methods that return `&str` (like `trim`) need `.to_string()` in an arm whose siblings return
   `String`, so the types agree.
 
+## `Option`: a value that may be missing
+
+- `Option<T>` is an enum with two variants: `Some(value)` (a value is there) and `None`
+  (nothing). A function returns it when "no answer" is a normal outcome (`HashMap::get`, a
+  lookup, a reading that may not exist). `Some(5)` and `5` are different types, so
+  `assert_eq!(opt, 5)` fails with `E0308: expected Option<u16>, found integer`.
+- Get the value out with `.unwrap()`: `Some(4).unwrap()` is `4`, but `None.unwrap()` PANICS
+  (`called Option::unwrap() on a None value`). Use it only where `None` cannot happen.
+- Make one with `Some(...)` or `None` as the function's last expression, like any other
+  value (`options1`).
+- Handle both cases with `match` (every case must be covered, as for any enum), or use the
+  short forms below when you only care about the `Some` case.
+
+  | Form | Runs | Stops |
+  |------|------|-------|
+  | `if let Some(v) = opt { ... }` | the block once, if `opt` is `Some` | skips it on `None` |
+  | `while let Some(v) = opt_source() { ... }` | the block again and again | the first time it gives `None` |
+
+- The pattern is as deep as the value: `Vec::pop()` on a `Vec<Option<i8>>` returns
+  `Option<Option<i8>>`, so the pattern is `Some(Some(n))`. A stored `None` is `Some(None)`,
+  which does not match, so the loop stops there (`options2`).
+
 ## HashMap: look up by key
 
 - `HashMap<K, V>` finds a value by a key (`"battery_v"` → `12.4`); a `Vec` finds by position.
