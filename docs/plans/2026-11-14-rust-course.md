@@ -212,12 +212,14 @@ check on both sides, and you can explain why `from_byte` returns an `Option` and
 Each later module's drill, quiz topics, blueprint, decisions and done-when are written here
 when the previous module is reviewed, so the plan follows what you actually learned.
 
-### Order from here (2026-11-19)
+### Order from here (2026-11-24)
 
 1. ✅ Build and review `m1-units` (2026-11-18).
 2. ✅ Build and review `m2-registers` (2026-11-19).
-3. 👈 Module 3: open with weak spot 7, then the drill above from `enums1`, the quiz, the
-   `m3-signals` build, the review.
+3. Module 3:
+   1. ✅ The drill above, `enums1` through `options3` (2026-11-24).
+   2. ✅ The closed-book quiz (2026-11-24, 3 of 5; both misses closed by twins).
+   3. 👈 The `m3-signals` build (scaffold, then explain each item), then the review.
 
 ### Review checklist
 
@@ -235,6 +237,8 @@ compiler's surprises are in `docs/notes/rust-cheatsheet.md`, and the work is one
 | 5 | `&self` borrows, plain `self` uses the value up | 2026-11-18, wrong first, then right twice; 2026-11-19 right | closed 2026-11-19 |
 | 6 | `i8` holds -128..=127 | 2026-11-17, right in the 2026-11-18 review; 2026-11-19 right | closed 2026-11-19 |
 | 7 | plain `self` MOVES the value (the caller's variable is gone); it does not write. Writing is `&mut self` | 2026-11-19, Module 2 explain question: "transfers ownership from read to write"; then right on a twin (`reset(&mut self)`, `retire(self)`, then a read); later 2026-11-19 wrong again (chose `self` for a method that does `+=` and is called twice; answer `&mut self`); 2026-11-23 right (`Counter`: `finish(self)` on line 3, then a use on line 4) | closed 2026-11-23 |
+| 8 | a `match` must cover every case, and a missing arm is a COMPILE error (`E0004`), not a runtime panic; a guard (`if n > 100`) does not count towards coverage | 2026-11-24, Module 3 quiz Q2: chose "panics at runtime" for a `match` on `Option<u16>` with no arm for `Some(1..)`; then right on a twin (`enum Mode` with no arm for `Off`) | closed 2026-11-24 |
+| 9 | `HashMap::get` (and `Vec::pop`) ALWAYS return an `Option`; `{:?}` shows `Some(...)` and `{}` does not compile (`E0277`) | 2026-11-24, Module 3 quiz Q4: chose `2 12.5` (the bare value); then right on a twin (`println!("{}", m.get("a"))` is `E0277`) | closed 2026-11-24 |
 
 Retake 2026-11-19: 6 of 6. The first four questions all had B as the correct letter (a quiz
 defect, since fixed); each idea also has a correct answer on an unbiased question.
@@ -245,4 +249,4 @@ defect, since fixed); each idea also has a correct answer on an unbiased questio
 |---|---|---|---|---|
 | 1 | m1-units | ✅ 2026-11-18 | shape; one reveal (the celsius f64 comment) | quiz 4/5 (missed the `i8` range); 17 checks, every band edge proven by breaking it; Q3 first answered "round to a whole number", corrected to a tolerance; repeat smaller: write the tolerance check yourself in Module 2 |
 | 2 | m2-registers | ✅ 2026-11-19 | shape; every body yours; two small reveals (a `65335` typo, the type `u32` passed as an argument) | quizzes 2026-11-18 3/8 and 2/5, retake 2026-11-19 6/6; 8 checks pass, tolerance check yours (`0.0001`); decisions: high register first (documented), divisor 0 panics, `raw: i16`, `divisor` back to `u16` after review; explain 1.5/2 (65535 → -1 right; `self` called a write, weak spot 7) |
-| 3 | m3-signals | ⏳ next | | `vecs1-2` done early; resume Rustlings at `enums1`; blueprint to be written into this plan |
+| 3 | m3-signals | ⏳ build next | drill: every body yours; hint ladder to shape only | drill `enums1` through `options3` done 2026-11-24 (`vecs1-2` earlier); quiz 3/5 (missed `match` exhaustiveness and `get` returning `Option`, both closed by twins; Q3 `as i16` of 40000 right, with a 65536 typo, corrected); cheatsheet has Option, `if let`/`while let`, match and module-path notes; build, review and the explain questions still to do |
