@@ -219,7 +219,7 @@ when the previous module is reviewed, so the plan follows what you actually lear
 3. Module 3:
    1. ✅ The drill above, `enums1` through `options3` (2026-11-24).
    2. ✅ The closed-book quiz (2026-11-24, 3 of 5; both misses closed by twins).
-   3. 👈 The `m3-signals` build (scaffold, then explain each item), then the review.
+   3. 👈 The `m3-signals` build, then the review. Scaffold committed 2026-11-25 (every body `todo!()`); item 1 (`FunctionCode`: `from_byte`, `to_byte`) explained, learner writing it. Still to explain and write: `is_write`, `Deadband`, `latest_by_register`.
 
 ### Review checklist
 
@@ -249,4 +249,4 @@ defect, since fixed); each idea also has a correct answer on an unbiased questio
 |---|---|---|---|---|
 | 1 | m1-units | ✅ 2026-11-18 | shape; one reveal (the celsius f64 comment) | quiz 4/5 (missed the `i8` range); 17 checks, every band edge proven by breaking it; Q3 first answered "round to a whole number", corrected to a tolerance; repeat smaller: write the tolerance check yourself in Module 2 |
 | 2 | m2-registers | ✅ 2026-11-19 | shape; every body yours; two small reveals (a `65335` typo, the type `u32` passed as an argument) | quizzes 2026-11-18 3/8 and 2/5, retake 2026-11-19 6/6; 8 checks pass, tolerance check yours (`0.0001`); decisions: high register first (documented), divisor 0 panics, `raw: i16`, `divisor` back to `u16` after review; explain 1.5/2 (65535 → -1 right; `self` called a write, weak spot 7) |
-| 3 | m3-signals | ⏳ build next | drill: every body yours; hint ladder to shape only | drill `enums1` through `options3` done 2026-11-24 (`vecs1-2` earlier); quiz 3/5 (missed `match` exhaustiveness and `get` returning `Option`, both closed by twins; Q3 `as i16` of 40000 right, with a 65536 typo, corrected); cheatsheet has Option, `if let`/`while let`, match and module-path notes; build, review and the explain questions still to do |
+| 3 | m3-signals | 👈 build in progress | drill: every body yours; hint ladder to shape only | drill `enums1` through `options3` done 2026-11-24 (`vecs1-2` earlier); quiz 3/5 (missed `match` exhaustiveness and `get` returning `Option`, both closed by twins; Q3 `as i16` of 40000 right, with a 65536 typo, corrected); cheatsheet has Option, `if let`/`while let`, match and module-path notes; scaffold committed 2026-11-25, item 1 explained and being written; the other items, review and the explain questions still to do |
