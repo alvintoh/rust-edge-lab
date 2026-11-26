@@ -65,6 +65,29 @@ fn main() {
         "WriteSingleRegister.is_write() = {}",
         FunctionCode::WriteSingleRegister.is_write()
     );
+
+    // Deadband of 0.5 over 12.0, 12.2, 12.6, 12.5, 13.2: sends 12.0, 12.6, 13.2. Each step is
+    // compared with the last SENT value, so 12.6 goes (0.6 from 12.0) though it is 0.4 from 12.2.
+    let mut d = Deadband::new(0.5);
+    assert!(d.should_send(12.0)); // first reading: always sent
+    assert!(!d.should_send(12.2)); // 0.2 from 12.0
+    assert!(d.should_send(12.6)); // 0.6 from 12.0
+    assert!(!d.should_send(12.5)); // 0.1 from 12.6
+    assert!(d.should_send(13.2)); // 0.6 from 12.6
+    println!("deadband 0.5 over 12.0, 12.2, 12.6, 12.5, 13.2 sends 12.0, 12.6, 13.2");
+
+    // Two more, so the checks catch two bugs the trace above cannot see:
+    // 13.0 is 0.2 from 13.2 (not sent), but 1.0 from 12.0 if the sent value were never stored;
+    // 12.5 is 0.7 BELOW 13.2 (sent), but -0.7 without `.abs()`, which is never above 0.5.
+    assert!(!d.should_send(13.0));
+    assert!(d.should_send(12.5));
+    println!("deadband then 13.0 (not sent), 12.5 (0.7 down: sent)");
+
+    // The edge: a change of exactly the threshold (12.0 and 12.5 are exact in binary).
+    let mut e = Deadband::new(0.5);
+    assert!(e.should_send(12.0));
+    assert!(!e.should_send(12.5)); // exactly 0.5: not sent, because should_send uses `>`
+    println!("deadband 0.5: 12.0 then 12.5 (exactly 0.5) is not sent");
 }
 
 /// The Modbus request kind, the first byte after the device address.
@@ -134,7 +157,10 @@ struct Deadband {
 impl Deadband {
     /// Makes a filter that has sent nothing yet.
     fn new(threshold: f64) -> Self {
-        todo!()
+        Deadband {
+            threshold,
+            last_sent: None,
+        }
     }
 
     /// Returns true when `value` should be sent, and remembers it if so.
@@ -148,8 +174,26 @@ impl Deadband {
     /// Compare against the last SENT value, not the previous reading: in the hand-computed run,
     /// 12.2 is 0.2 above 12.0 (not sent) and 12.6 is 0.6 above 12.0 (sent), but 12.6 is only
     /// 0.4 above 12.2. Why does that decide which field you need?
+    ///
     fn should_send(&mut self, value: f64) -> bool {
-        todo!()
+        match self.last_sent {
+            // The first reading is always sent, because there is no last value to compare against.
+            None => {
+                self.last_sent = Some(value);
+                true
+            }
+            // Compare against the last SENT value, not the previous reading
+            Some(last) => {
+                // `>` not `>=`: a move of exactly the threshold stays inside the band, so a value
+                // bouncing between two points exactly that far apart is not resent every time.
+                if (value - last).abs() > self.threshold {
+                    self.last_sent = Some(value);
+                    true
+                } else {
+                    false
+                }
+            }
+        }
     }
 }
 
