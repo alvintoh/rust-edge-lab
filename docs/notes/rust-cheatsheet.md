@@ -380,3 +380,11 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   used up: take it (`close(self)`).
 - The return value never decides this. `from_byte` and `to_byte` both hand back a new value;
   they differ only because `u8` is `Copy` and `FunctionCode` is not.
+
+## Formatting and lints
+
+- Indent is 4 spaces, never tabs; lines up to 100 wide (rustfmt's defaults). Never hand-format:
+  `cargo fmt` does it, and Zed does it on save.
+- Before every commit: `cargo fmt`, then `cargo clippy`. Zed runs clippy on save too.
+- `rust-toolchain.toml` pins Rust 1.100.0 with rustfmt and clippy, so the Mac and WSL compile
+  the same way.
