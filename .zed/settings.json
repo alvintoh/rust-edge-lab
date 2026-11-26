@@ -2,7 +2,8 @@
   "lsp": {
     "rust-analyzer": {
       "initialization_options": {
-        "linkedProjects": ["Cargo.toml", "rustlings/Cargo.toml"]
+        "linkedProjects": ["Cargo.toml", "rustlings/Cargo.toml"],
+        "check": { "command": "clippy" }
       }
     }
   }
