@@ -1,4 +1,7 @@
 {
+  "languages": {
+    "Rust": { "tab_size": 4 }
+  },
   "lsp": {
     "rust-analyzer": {
       "initialization_options": {
