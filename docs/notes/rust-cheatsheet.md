@@ -117,6 +117,12 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 - An "oracle" is a testing word, not a Rust one: the source of the expected answer, worked
   out without the code under test (by hand, a device display, another program). In
   `assert_eq!(f(1, 0), 65536)` the `65536` is the oracle.
+- `///` must sit directly above an item. Inside a function body there is no item below it, so it
+  is a compile error: `E0658` "attributes on expressions are experimental", with the help "for a
+  plain comment, use `//`".
+- A note on WHY a line is written the way it is (a `>` chosen over `>=`, an arm order) is a `//`
+  on the line above it, inside the function. The `///` above the `fn` says what the function
+  does, so hover shows it to callers.
 
 ## Unfinished code: `todo!()`
 
