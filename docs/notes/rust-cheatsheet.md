@@ -368,3 +368,15 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   `let x = b.level(); b.recycle();` then `x` works but `b.level()` fails with `E0382`.
 - Picking the signature: is the value used again after the call? Then borrow (`&…`). Does the
   method change a field? Then `&mut`.
+- Calling: look at the first parameter. Any `self`: a value, a dot, the name
+  (`code.to_byte()`). No `self`: the type, `::`, the name (`FunctionCode::from_byte(0x03)`).
+  `code.to_byte()` is shorthand for `FunctionCode::to_byte(&code)`.
+- A `Copy` input is never lost. Numbers, `bool` and `char` are `Copy`, built into Rust. Passing
+  one by value hands over a copy, so `from_byte(byte: u8)` takes nothing from the caller, and
+  `&u8` would gain nothing. Your own type is `Copy` only if its `#[derive]` lists `Clone, Copy`,
+  and only when every field is `Copy` (a `String` field gives `E0204`).
+- For any input, ask: if I take it by value, does the caller lose it? `Copy`: no, so take it by
+  value. Not `Copy` and only read: yes, so borrow (`to_byte(&self)`). Not `Copy` and meant to be
+  used up: take it (`close(self)`).
+- The return value never decides this. `from_byte` and `to_byte` both hand back a new value;
+  they differ only because `u8` is `Copy` and `FunctionCode` is not.
