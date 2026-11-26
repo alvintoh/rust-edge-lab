@@ -19,6 +19,40 @@ fn main() {
     //   Deadband of 0.5, 12.0 then 12.5: a change of exactly 0.5, so check BOTH sides of the edge
     //
     //   latest_by_register(&[(100, 12.0), (101, 3.0), (100, 12.5)]) is {100: 12.5, 101: 3.0}
+
+    // from_byte: a known byte becomes Some(code); anything else is None.
+    assert_eq!(
+        FunctionCode::from_byte(0x03),
+        Some(FunctionCode::ReadHoldingRegisters)
+    );
+    println!("from_byte(0x03) = {:?}", FunctionCode::from_byte(0x03));
+    assert_eq!(FunctionCode::from_byte(0x2B), None);
+    println!("from_byte(0x2B) = {:?}", FunctionCode::from_byte(0x2B));
+    assert_eq!(FunctionCode::from_byte(0x83), None);
+    println!("from_byte(0x83) = {:?}", FunctionCode::from_byte(0x83));
+
+    // to_byte against the spec: a round trip alone would pass if both functions swapped 0x04 and
+    // 0x06 the same way, so pin one byte to its spec value too.
+    assert_eq!(FunctionCode::WriteSingleRegister.to_byte(), 0x06);
+    println!(
+        "WriteSingleRegister.to_byte() = {:#04x}",
+        FunctionCode::WriteSingleRegister.to_byte()
+    );
+
+    // Round trip: from_byte(code.to_byte()) gives the same code back, for every variant.
+    assert_eq!(
+        FunctionCode::from_byte(FunctionCode::ReadHoldingRegisters.to_byte()),
+        Some(FunctionCode::ReadHoldingRegisters)
+    );
+    assert_eq!(
+        FunctionCode::from_byte(FunctionCode::ReadInputRegisters.to_byte()),
+        Some(FunctionCode::ReadInputRegisters)
+    );
+    assert_eq!(
+        FunctionCode::from_byte(FunctionCode::WriteSingleRegister.to_byte()),
+        Some(FunctionCode::WriteSingleRegister)
+    );
+    println!("round trip ok for all 3 variants");
 }
 
 /// The Modbus request kind, the first byte after the device address.
@@ -42,7 +76,12 @@ impl FunctionCode {
     /// reply to a read)? Why is `Option` the right return type here, and not a `FunctionCode`
     /// with an `Unknown` variant? Think about what a caller must do with each.
     fn from_byte(byte: u8) -> Option<FunctionCode> {
-        todo!()
+        match byte {
+            0x03 => Some(FunctionCode::ReadHoldingRegisters),
+            0x04 => Some(FunctionCode::ReadInputRegisters),
+            0x06 => Some(FunctionCode::WriteSingleRegister),
+            _ => None,
+        }
     }
 
     /// Turns a function code back into the byte to send.
@@ -50,7 +89,11 @@ impl FunctionCode {
     /// Why does this take `&self` and not `self`? What would a caller lose if it took `self`
     /// (weak spot 7 and `options3`)?
     fn to_byte(&self) -> u8 {
-        todo!()
+        match self {
+            FunctionCode::ReadHoldingRegisters => 0x03,
+            FunctionCode::ReadInputRegisters => 0x04,
+            FunctionCode::WriteSingleRegister => 0x06,
+        }
     }
 
     /// True when the request changes the device, false when it only reads.
