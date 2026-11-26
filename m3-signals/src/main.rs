@@ -88,6 +88,16 @@ fn main() {
     assert!(e.should_send(12.0));
     assert!(!e.should_send(12.5)); // exactly 0.5: not sent, because should_send uses `>`
     println!("deadband 0.5: 12.0 then 12.5 (exactly 0.5) is not sent");
+
+    // latest_by_register: the last value for each register is kept, so 100: 12.5 and 101: 3.0.
+    let latest = latest_by_register(&[(100, 12.0), (101, 3.0), (100, 12.5)]);
+    assert_eq!(latest[&100], 12.5);
+    assert_eq!(latest[&101], 3.0);
+    assert_eq!(latest.len(), 2);
+    println!(
+        "latest_by_register(&[(100, 12.0), (101, 3.0), (100, 12.5)]) = {:?}",
+        latest
+    );
 }
 
 /// The Modbus request kind, the first byte after the device address.
@@ -202,5 +212,9 @@ impl Deadband {
 /// Decision 4: when a register appears twice, which value do you keep? Which `HashMap` method
 /// replaces a value, and which one leaves an existing one alone (see the cheatsheet)?
 fn latest_by_register(readings: &[(u16, f64)]) -> HashMap<u16, f64> {
-    todo!()
+    let mut map = HashMap::new();
+    for &(register, value) in readings {
+        map.insert(register, value);
+    }
+    map
 }
