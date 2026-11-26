@@ -53,6 +53,18 @@ fn main() {
         Some(FunctionCode::WriteSingleRegister)
     );
     println!("round trip ok for all 3 variants");
+
+    // is_write: a read leaves the device unchanged, a write changes it.
+    assert!(!FunctionCode::ReadHoldingRegisters.is_write());
+    println!(
+        "ReadHoldingRegisters.is_write() = {}",
+        FunctionCode::ReadHoldingRegisters.is_write()
+    );
+    assert!(FunctionCode::WriteSingleRegister.is_write());
+    println!(
+        "WriteSingleRegister.is_write() = {}",
+        FunctionCode::WriteSingleRegister.is_write()
+    );
 }
 
 /// The Modbus request kind, the first byte after the device address.
@@ -100,7 +112,10 @@ impl FunctionCode {
     ///
     /// Which kind of `match` makes the compiler tell you when a fourth variant is added later?
     fn is_write(&self) -> bool {
-        todo!()
+        match self {
+            FunctionCode::WriteSingleRegister => true,
+            FunctionCode::ReadHoldingRegisters | FunctionCode::ReadInputRegisters => false,
+        }
     }
 }
 
