@@ -251,6 +251,15 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   lookup, a reading that may not exist). `HashMap::get` and `Vec::pop` ALWAYS return one, even
   when the key or item is there. `Some(5)` and `5` are different types, so
   `assert_eq!(opt, 5)` fails with `E0308: expected Option<u16>, found integer`.
+- `None` is Rust's null; `Some(v)` means "not null, and here is `v`". Unlike null, only an
+  `Option` can be `None`, and you cannot use the value until you open it with `match` or
+  `if let`: calling the inner type's method on the `Option` is `E0599` (`no method named
+  is_write found for enum Option`). `Some(last) =>` opens it and names the value `last`.
+- Prefer `Option` to a stand-in value (an `Unknown` variant, a `0.0`). A stand-in looks like
+  a real answer, so a caller who forgets the missing case compiles and gets a silent wrong
+  result: `FunctionCode::Unknown.is_write()` is `false`, and a missing register read as `0.0`
+  looks like a panel reading 0. With `Option`, `get` gives `Some(0.0)` for a real 0 and
+  `None` for a missing register (`m3-signals` `from_byte`).
 - Get the value out with `.unwrap()`: `Some(4).unwrap()` is `4`, but `None.unwrap()` PANICS
   (`called Option::unwrap() on a None value`). Use it only where `None` cannot happen.
 - Make one with `Some(...)` or `None` as the function's last expression, like any other
