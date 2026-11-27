@@ -298,8 +298,9 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   reason (a bad register-map row: which line, what was wrong).
 - `&str` to `String`: `.to_string()` and `String::from` always work; `.into()` works only where
   the target type is already fixed (a return type, the `Err` slot), else `E0283: type
-  annotations needed`. The result is the same `String`; which to use is a style choice, not a
-  rule. `?` uses the same `From` machinery as `.into()`.
+  annotations needed`. Why: `.into()` takes its target FROM THE CONTEXT, while `.to_string()`
+  and `String::from` state the target themselves. The result is the same `String`; which to
+  use is a style choice, not a rule. `?` uses the same `From` machinery as `.into()`.
 
 ## HashMap: look up by key
 
