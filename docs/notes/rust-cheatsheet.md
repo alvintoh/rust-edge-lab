@@ -309,6 +309,10 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   function that returns Result` (`errors3`).
 - `main` may return `Result<(), E>`: `()` means "nothing", so success is `Ok(())`. An `Err` out
   of `main` prints `Error: ...` and exits with code 1, which a supervisor can see.
+- The compiler checks EVERY path, not just today's input: with `"8"` the `?` never fails, but
+  `"beep"` could, so the `Err` path still needs a place to go. That is why `main` needs
+  `-> Result<(), E>` whose `E` is the error the `?` passes up (the callee's `Err` type, here
+  `ParseIntError`), and why it must end with `Ok(())` (`errors3`).
 
 ## HashMap: look up by key
 
