@@ -289,6 +289,18 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   `Option<Option<i8>>`, so the pattern is `Some(Some(n))`. A stored `None` is `Some(None)`,
   which does not match, so the loop stops there (`options2`).
 
+## `Result`: a value or the reason it failed
+
+- `Result<T, E>` has `Ok(value)` and `Err(reason)`. The order is fixed: the FIRST type is what
+  `Ok` holds, the SECOND what `Err` holds (`Result<u16, String>`: `Ok(100)` or an `Err`
+  holding a `String`; in `errors1` both are `String`).
+- `None` says "no answer"; `Err(reason)` says WHY. Use `Result` when the caller needs the
+  reason (a bad register-map row: which line, what was wrong).
+- `&str` to `String`: `.to_string()` and `String::from` always work; `.into()` works only where
+  the target type is already fixed (a return type, the `Err` slot), else `E0283: type
+  annotations needed`. The result is the same `String`; which to use is a style choice, not a
+  rule. `?` uses the same `From` machinery as `.into()`.
+
 ## HashMap: look up by key
 
 - `HashMap<K, V>` finds a value by a key (`"battery_v"` → `12.4`); a `Vec` finds by position.
