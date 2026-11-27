@@ -236,6 +236,9 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   into `code`; `Event::Reading { volts, amps } => ...` unpacks named fields.
 - It must cover EVERY case: a missing variant fails with `E0004: non-exhaustive patterns`.
   For numbers or text, finish with `_ => ...` to catch the rest.
+- On a number `_` is needed (a `u8` has 256 values). On your OWN enum, avoid `_` and name
+  every variant: adding a variant then fails with `E0004` until each `match` decides what it
+  means, instead of falling silently into `_` (`m3-signals` `is_write`).
 - `match` is an expression: it produces a value, so `let result = match op { ... };` works. An
   arm's last line has no `;` (the last-expression rule), and EVERY arm must give the same type
   (`E0308: match arms have incompatible types`).
@@ -246,6 +249,13 @@ My own notes from the course, checked by running them on Rust 1.100.0.
 
 ## `Option`: a value that may be missing
 
+| Term | Means | In `m3-signals` |
+|------|-------|-----------------|
+| `Some(v)` | a box with a value inside | `from_byte(0x03)` is `Some(ReadHoldingRegisters)` |
+| `None` | an empty box, Rust's null | `from_byte(0x83)` is `None` |
+| `Unknown` | a fake value that looks real (NOT in the code) | the rejected design for `from_byte` |
+| `_ =>` | the catch-all arm: every case not named above it | `from_byte`'s `_ => None` |
+
 - `Option<T>` is an enum with two variants: `Some(value)` (a value is there) and `None`
   (nothing). A function returns it when "no answer" is a normal outcome (`HashMap::get`, a
   lookup, a reading that may not exist). `HashMap::get` and `Vec::pop` ALWAYS return one, even
@@ -255,6 +265,9 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   `Option` can be `None`, and you cannot use the value until you open it with `match` or
   `if let`: calling the inner type's method on the `Option` is `E0599` (`no method named
   is_write found for enum Option`). `Some(last) =>` opens it and names the value `last`.
+- The CALLER opens the box; `is_write` only ever gets a real `FunctionCode`. The check is on
+  the TYPE, at compile time, so even `Some(x).is_write()` is `E0599`: nothing runs. Comparing
+  two boxes needs no opening: `assert_eq!(FunctionCode::from_byte(0x83), None)`.
 - Prefer `Option` to a stand-in value (an `Unknown` variant, a `0.0`). A stand-in looks like
   a real answer, so a caller who forgets the missing case compiles and gets a silent wrong
   result: `FunctionCode::Unknown.is_write()` is `false`, and a missing register read as `0.0`
