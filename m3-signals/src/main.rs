@@ -3,23 +3,9 @@
 //!
 //! Run from the repo root: `cargo run -p m3-signals`
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 fn main() {
-    // Your checks go here: one `assert_eq!` plus one `println!` per case, as in m2-registers.
-    //
-    // Hand-computed cases (worked out on paper, so the code is checked against something other
-    // than itself):
-    //
-    //   from_byte(0x03)  is Some(ReadHoldingRegisters)
-    //   from_byte(0x2B)  is None
-    //   to_byte          round-trips every variant: from_byte(code.to_byte()) is Some(code)
-    //
-    //   Deadband of 0.5 over 12.0, 12.2, 12.6, 12.5, 13.2 sends 12.0, 12.6, 13.2
-    //   Deadband of 0.5, 12.0 then 12.5: a change of exactly 0.5, so check BOTH sides of the edge
-    //
-    //   latest_by_register(&[(100, 12.0), (101, 3.0), (100, 12.5)]) is {100: 12.5, 101: 3.0}
-
     // from_byte: a known byte becomes Some(code); anything else is None.
     assert_eq!(
         FunctionCode::from_byte(0x03),
@@ -116,10 +102,9 @@ enum FunctionCode {
 impl FunctionCode {
     /// Turns the byte read off the wire into a function code.
     ///
-    /// Decision 1: what do you return for a byte that is not 0x03, 0x04 or 0x06, such as 0x2B
-    /// (a real Modbus code this program does not handle) or 0x83 (0x03 plus 0x80, an ERROR
-    /// reply to a read)? Why is `Option` the right return type here, and not a `FunctionCode`
-    /// with an `Unknown` variant? Think about what a caller must do with each.
+    /// Returns `None` for any other byte: a real code this program does not handle (0x2B), and
+    /// an error reply (0x83 is 0x03 plus 0x80). `Option` forces every caller to handle the
+    /// unknown case, where an `Unknown` variant could be passed along by mistake.
     fn from_byte(byte: u8) -> Option<FunctionCode> {
         match byte {
             0x03 => Some(FunctionCode::ReadHoldingRegisters),
@@ -131,8 +116,7 @@ impl FunctionCode {
 
     /// Turns a function code back into the byte to send.
     ///
-    /// Why does this take `&self` and not `self`? What would a caller lose if it took `self`
-    /// (weak spot 7 and `options3`)?
+    /// Takes `&self` because it only reads: the caller keeps the code and can use it again.
     fn to_byte(&self) -> u8 {
         match self {
             FunctionCode::ReadHoldingRegisters => 0x03,
@@ -143,7 +127,8 @@ impl FunctionCode {
 
     /// True when the request changes the device, false when it only reads.
     ///
-    /// Which kind of `match` makes the compiler tell you when a fourth variant is added later?
+    /// Every variant is named, with no `_` arm, so adding a fourth variant is a compile error
+    /// here until someone decides whether it writes.
     fn is_write(&self) -> bool {
         match self {
             FunctionCode::WriteSingleRegister => true,
@@ -157,10 +142,8 @@ impl FunctionCode {
 struct Deadband {
     /// How far a value must move from the last SENT value before it is sent again.
     threshold: f64,
-    /// The last value that was sent, or `None` before anything has been sent.
-    ///
-    /// Why `Option<f64>` and not `f64`? What would you store before the first reading, and why
-    /// would `0.0` be a wrong answer?
+    /// The last value that was sent, or `None` before anything has been sent. A starting `0.0`
+    /// would be wrong: a first reading within the threshold of 0.0 would never be sent.
     last_sent: Option<f64>,
 }
 
@@ -175,16 +158,12 @@ impl Deadband {
 
     /// Returns true when `value` should be sent, and remembers it if so.
     ///
-    /// Decision 3: why `&mut self` here but `&self` on `to_byte`? Which line changes `self`?
+    /// Takes `&mut self` because it writes `self.last_sent`; `to_byte` only reads, so `&self`.
     ///
-    /// Decision 2: a change of EXACTLY the threshold (12.0 then 12.5 with a threshold of 0.5):
-    /// sent or not? Pick `>` or `>=`, write the choice down, and check both sides of the edge.
-    /// (12.0 and 12.5 are both exact in binary, so the difference is exactly 0.5.)
+    /// A change of exactly the threshold is NOT sent (`>`, not `>=`).
     ///
-    /// Compare against the last SENT value, not the previous reading: in the hand-computed run,
-    /// 12.2 is 0.2 above 12.0 (not sent) and 12.6 is 0.6 above 12.0 (sent), but 12.6 is only
-    /// 0.4 above 12.2. Why does that decide which field you need?
-    ///
+    /// Compares against the last SENT value, not the previous reading, so slow drift still adds
+    /// up: 12.0, 12.2, 12.6 sends 12.6, which is 0.6 from 12.0 though only 0.4 from 12.2.
     fn should_send(&mut self, value: f64) -> bool {
         match self.last_sent {
             // The first reading is always sent, because there is no last value to compare against.
@@ -209,10 +188,10 @@ impl Deadband {
 
 /// Keeps the newest value for each register, given readings in the order they arrived.
 ///
-/// Decision 4: when a register appears twice, which value do you keep? Which `HashMap` method
-/// replaces a value, and which one leaves an existing one alone (see the cheatsheet)?
-fn latest_by_register(readings: &[(u16, f64)]) -> HashMap<u16, f64> {
-    let mut map = HashMap::new();
+/// `insert` replaces an existing value, so the last reading wins. A `BTreeMap` keeps the
+/// registers sorted, so the map prints in the same order on every run.
+fn latest_by_register(readings: &[(u16, f64)]) -> BTreeMap<u16, f64> {
+    let mut map = BTreeMap::new();
     for &(register, value) in readings {
         map.insert(register, value);
     }
