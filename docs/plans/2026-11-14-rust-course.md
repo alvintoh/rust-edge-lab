@@ -207,6 +207,74 @@ read input registers, 0x06 write single register; an error reply adds 0x80).
 check on both sides, and you can explain why `from_byte` returns an `Option` and why
 `should_send` needs `&mut self`.
 
+### Module 4 — `m4-regmap`
+
+**Drill, in this order** (Rustlings, run from `rustlings/`); the tutor names the Book section
+as each group starts:
+
+| # | Group | Book |
+|---|---|---|
+| 1 | `errors1-6` | 9.1–9.3 |
+| 2 | `generics1-2` | 10.1 |
+| 3 | `traits1-5` | 10.2 |
+| 4 | `quiz3` | (mixes the groups above) |
+| 5 | `lifetimes1-3` | 10.3 |
+
+**Quiz first** (about 5, one at a time, after the drill): `Result` vs `Option`, and when each
+fits; what `?` does on an `Err` (an early return); `unwrap` vs `?` vs `match`; a trait and
+`impl Display for` a type; why a function returning a reference into its input needs `'a`.
+Plus 3 spaced from Modules 1–3, after the open weak spots.
+
+**Build:** `cargo new m4-regmap` at the repo root; the tutor scaffolds and explains each item.
+A register map is the device manual's table as text: one row per register, saying where it
+is, what it means and how to scale it. No CSV crate: `split(',')` and `trim` are enough here.
+
+Functions to create (bodies are yours):
+
+    struct RegisterDef { address: u16, name: String, divisor: u16, unit: String }
+    enum ParseError {
+        WrongFieldCount { line: usize, found: usize },
+        BadAddress { line: usize, text: String },
+        BadDivisor { line: usize, text: String },
+        ZeroDivisor { line: usize },
+    }
+    impl fmt::Display for ParseError                 // one readable line per error
+    fn parse_address(text: &str) -> Result<u16, ParseError>   // "0x3100" -> 12544
+    fn parse_line(line: usize, text: &str) -> Result<RegisterDef, ParseError>  // uses `?`
+    fn parse_map(text: &str) -> (Vec<RegisterDef>, Vec<ParseError>)
+    fn find<'a>(defs: &'a [RegisterDef], name: &str) -> Option<&'a RegisterDef>
+    impl RegisterDef { fn decode(&self, raw: u16) -> f64 }    // raw / divisor, as in Module 2
+
+Hand-computed case, the fixture (line numbers count from 1, comment and blank lines included):
+
+    # address,name,divisor,unit
+    0x3100,pv_voltage,100,V
+    0x3101,pv_current,100,A
+
+    0x311A,battery_soc,1,%
+    0x3104,battery_voltage,100
+    0xZZ00,bad_address,100,V
+    0x3110,battery_temp,0,C
+
+gives 3 good rows (`0x3100` = 12544, `0x3101`, `0x311A` = 12570) and 3 errors: line 6
+`WrongFieldCount { found: 3 }`, line 7 `BadAddress "0xZZ00"`, line 8 `ZeroDivisor`.
+`find(&defs, "pv_voltage")` is `Some`, `find(&defs, "nope")` is `None`, and `pv_voltage`
+decodes raw `1263` as `12.63`. The addresses follow an EPEver Tracer layout but are only
+a fixture here; confirm each against the manual before Module 9 relies on them.
+
+**Decisions left to you:**
+1. A bad row: stop the whole parse, or keep the good rows and collect every error? Which does
+   a gateway starting on a site want, and which does a config check in CI want?
+2. Addresses in hex only (`0x3100`), or decimal too (`12544`)? Manuals use both.
+3. A divisor of 0 is now an error at parse time (closing Module 2's decision 2): why is that
+   better than a panic in `decode`?
+4. Which lines are skipped (blank, `#` comments), and is whitespace around fields trimmed?
+5. Why `find` returns `Option<&'a RegisterDef>` and not `Result`, and what `'a` promises.
+
+**Done when:** `cargo run -p m4-regmap` prints every check passing, the fixture's three bad
+rows each produce their own error with the right line number, and you can explain what `?`
+does and why `find` needs `'a`.
+
 ### Later modules
 
 Each later module's drill, quiz topics, blueprint, decisions and done-when are written here
@@ -220,7 +288,9 @@ when the previous module is reviewed, so the plan follows what you actually lear
    1. ✅ The drill above, `enums1` through `options3` (2026-11-24).
    2. ✅ The closed-book quiz (2026-11-24, 3 of 5; both misses closed by twins).
    3. ✅ The `m3-signals` build (2026-11-26) and review (2026-11-27).
-4. 👈 Module 4: write its blueprint into this plan, then the drill.
+4. Module 4:
+   1. ✅ Blueprint written (2026-11-27).
+   2. 👈 The drill above, starting with `errors1` (Book 9.1).
 
 ### Review checklist
 
