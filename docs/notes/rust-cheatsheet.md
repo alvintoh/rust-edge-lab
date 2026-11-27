@@ -301,6 +301,14 @@ My own notes from the course, checked by running them on Rust 1.100.0.
   annotations needed`. Why: `.into()` takes its target FROM THE CONTEXT, while `.to_string()`
   and `String::from` state the target themselves. The result is the same `String`; which to
   use is a style choice, not a rule. `?` uses the same `From` machinery as `.into()`.
+- `?` after a `Result`: on `Ok(v)` it unwraps to `v` and the function carries on; on `Err(e)`
+  it RETURNS `Err(e)` from the whole function at once. One `?` replaces `is_ok` + `unwrap` +
+  `unwrap_err` (clippy `unnecessary_unwrap`) (`errors2`).
+- `?` works only inside a function that itself returns a `Result` (or `Option`) whose `Err`
+  type fits; in a function returning `()` it is `E0277: the ? operator can only be used in a
+  function that returns Result` (`errors3`).
+- `main` may return `Result<(), E>`: `()` means "nothing", so success is `Ok(())`. An `Err` out
+  of `main` prints `Error: ...` and exits with code 1, which a supervisor can see.
 
 ## HashMap: look up by key
 
